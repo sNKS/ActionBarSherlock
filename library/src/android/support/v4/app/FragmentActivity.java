@@ -28,7 +28,9 @@ import com.actionbarsherlock.internal.view.menu.MenuBuilder;
 import com.actionbarsherlock.internal.view.menu.MenuInflaterWrapper;
 import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
 import com.actionbarsherlock.internal.view.menu.MenuItemWrapper;
+import com.actionbarsherlock.internal.view.menu.MenuView;
 import com.actionbarsherlock.internal.view.menu.MenuWrapper;
+import com.actionbarsherlock.internal.view.menu.SubMenuBuilder;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -120,6 +122,28 @@ public class FragmentActivity extends Activity {
 		public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
 			return FragmentActivity.this.onMenuItemSelected(Window.FEATURE_OPTIONS_PANEL, item);
 		}
+
+		@Override
+		public void onCloseMenu(MenuBuilder paramMenuBuilder, boolean paramBoolean) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onCloseSubMenu(SubMenuBuilder paramSubMenuBuilder) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onMenuModeChange(MenuBuilder paramMenuBuilder) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public boolean onSubMenuSelected(SubMenuBuilder paramSubMenuBuilder) {
+			// TODO Auto-generated method stub
+			// TODO Show list dialog
+			return false;
+		}
 	};
 	
 	boolean mCreated;
@@ -188,7 +212,7 @@ public class FragmentActivity extends Activity {
 				((ActionBarSupportImpl)mActionBar).setWindowIndeterminateProgressEnabled(indProgressEnabled);
 				//TODO set other flags
 				
-				((ActionBarSupportImpl)mActionBar).init();
+				((ActionBarSupportImpl)mActionBar).init(getWindow().getDecorView());
 			} else {
 				if ((mWindowFlags & WINDOW_FLAG_INDETERMINANTE_PROGRESS) == WINDOW_FLAG_INDETERMINANTE_PROGRESS) {
 					super.requestWindowFeature((int)Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -529,7 +553,7 @@ public class FragmentActivity extends Activity {
 			//inflation callback to allow it to display any items it wants.
 			//Any items that were displayed will have a boolean toggled so that we
 			//do not display them on the options menu.
-			((ActionBarSupportImpl)mActionBar).onMenuInflated(mSupportMenu);
+			((ActionBarSupportImpl)mActionBar).setMenu(mSupportMenu);
 			
 			// Whoops, older platform...  we'll use a hack, to manually rebuild
 			// the options menu the next time it is prepared.
@@ -616,7 +640,7 @@ public class FragmentActivity extends Activity {
 				
 			case Window.FEATURE_CONTEXT_MENU:
 				return mFragments.dispatchContextItemSelected(item);
-
+			
 			default:
 				return false;
 		}
@@ -717,10 +741,10 @@ public class FragmentActivity extends Activity {
 					if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Adding any action items that are not displayed on the action bar.");
 					//Only add items that have not already been added to our custom
 					//action bar implementation
-					for (MenuItemImpl item : mSupportMenu.getItems()) {
-						if (!item.isShownOnActionBar()) {
-							item.addTo(menu);
-						}
+					MenuBuilder.MenuAdapter overflowAdapter = mSupportMenu.getOverflowMenuAdapter(0);
+					for (int i = 0, count = overflowAdapter.getCount(); i < count; i++) {
+						MenuView.ItemView view = overflowAdapter.getItem(i).getItemView(MenuBuilder.TYPE_NATIVE, null);
+						((MenuItemImpl.NativeItemView)view).attach(menu);
 					}
 				}
 			}
@@ -1042,16 +1066,6 @@ public class FragmentActivity extends Activity {
 		
 		//Return to the caller
 		return actionMode;
-	}
-	
-	/**
-	 * Get a special instance of {@link MenuItemImpl} which denotes the home
-	 * item and should be invoked when the custom home button is clicked.
-	 *  
-	 * @return Menu item instance.
-	 */
-	final MenuItemImpl getHomeMenuItem() {
-		return mSupportMenu.addDetached(android.R.id.home);
 	}
 
 	// ------------------------------------------------------------------------

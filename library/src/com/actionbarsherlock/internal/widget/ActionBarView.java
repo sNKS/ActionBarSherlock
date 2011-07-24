@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActionBar;
+import android.support.v4.view.Menu;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -17,6 +19,8 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import com.actionbarsherlock.R;
+import com.actionbarsherlock.internal.view.menu.ActionMenuView;
+import com.actionbarsherlock.internal.view.menu.MenuBuilder;
 
 public final class ActionBarView extends RelativeLayout {
 	/** Default display options if none are defined in the theme. */
@@ -45,10 +49,8 @@ public final class ActionBarView extends RelativeLayout {
 	/** Custom view parent. */
 	private final FrameLayout mCustomView;
 	
-	private final Drawable mDivider;
-	
 	/** Container for all action items. */
-	private final LinearLayout mActionsView;
+	private final FrameLayout mMenuContainerView;
 
 	/** Container for all tab items. */
 	private final LinearLayout mTabsView;
@@ -77,6 +79,10 @@ public final class ActionBarView extends RelativeLayout {
 	private boolean mIsActionItemTextEnabled = false;
 	
 	private boolean mIsConstructing;
+	
+	private MenuBuilder mOptionsMenu;
+	
+	private ActionMenuView mMenuView;
 	
 	
 
@@ -169,12 +175,11 @@ public final class ActionBarView extends RelativeLayout {
 		
 		
 		
-
-		mActionsView = (LinearLayout)findViewById(R.id.actionbarwatson_actions);
-		mDivider = attrsActionBar.getDrawable(R.styleable.SherlockTheme_abDivider);
 		
+		mMenuContainerView = (FrameLayout)findViewById(R.id.actionbarwatson_actions);
 		mIndeterminateProgress = (ProgressBar)findViewById(R.id.actionbarwatson_iprogress);
 		
+		//Look for a background defined in the theme
 		Drawable background = attrsActionBar.getDrawable(R.styleable.SherlockTheme_abBackground);
 		if (background != null) {
 			setBackgroundDrawable(background);
@@ -535,47 +540,18 @@ public final class ActionBarView extends RelativeLayout {
 		return mHome;
 	}
 	
-	public ActionBarView.Item newItem() {
-		ActionItem item = (ActionItem)LayoutInflater.from(getContext()).inflate(R.layout.action_bar_item_layout, mActionsView, false);
-		item.setActionBar(this);
-		return item;
-	}
-	
-	public void addItem(ActionBarView.Item item) {
-		if (item instanceof HomeItem) {
-			throw new IllegalStateException("Cannot add home item as an action item.");
-		}
-		
-		if (mDivider != null) {
-			ImageView divider = new ImageView(getContext());
-			divider.setImageDrawable(mDivider);
-			divider.setScaleType(ImageView.ScaleType.FIT_XY);
+	public void setMenu(Menu menu) {
+		if (mOptionsMenu != menu) {
+			mOptionsMenu = (MenuBuilder)menu;
 			
-			LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.WRAP_CONTENT,
-				LinearLayout.LayoutParams.FILL_PARENT
-			);
-			
-			mActionsView.addView(divider, dividerParams);
-		}
-		
-		mActionsView.addView(item);
-	}
-	
-	public void removeAllItems() {
-		mActionsView.removeAllViews();
-	}
-	
-	public void setIsActionItemTextEnabled(boolean isActionItemTextEnabled) {
-		if (isActionItemTextEnabled != mIsActionItemTextEnabled) {
-			mIsActionItemTextEnabled = isActionItemTextEnabled;
-			final int count = mActionsView.getChildCount();
-			for (int i = count - 1; i >= 0; i--) {
-				View view = mActionsView.getChildAt(i);
-				if (view instanceof ActionItem) {
-					((ActionItem)view).reloadDisplay();
-				}
+			if (mMenuView != null) {
+				mMenuContainerView.removeAllViews();
+				mMenuView = null;
 			}
+			
+			mMenuView = (ActionMenuView)mOptionsMenu.getMenuView(MenuBuilder.TYPE_ACTION_BAR, null);
+			mMenuView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+			mMenuContainerView.addView(mMenuView);
 		}
 	}
 	
