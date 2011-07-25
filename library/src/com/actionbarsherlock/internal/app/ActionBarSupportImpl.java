@@ -65,12 +65,6 @@ public final class ActionBarSupportImpl extends ActionBar {
 		if (mActionBar == null) {
 			throw new IllegalStateException(getClass().getSimpleName() + " can only be used with a screen_*.xml layout");
 		}
-		
-		//final MenuItemImpl homeMenuItem = null;//TODO
-		final ActionBarView.Item homeItem = mActionBar.getHomeItem();
-		//final WatsonItemViewWrapper homeWrapper = new WatsonItemViewWrapper(homeItem);
-		//homeWrapper.initialize(homeMenuItem, MenuBuilder.TYPE_ACTION_ITEM);
-		//homeMenuItem.setItemView(MenuBuilder.TYPE_ACTION_ITEM, homeWrapper);
 
 		final PackageManager pm = getActivity().getPackageManager();
 		final ApplicationInfo appInfo = getActivity().getApplicationInfo();
@@ -89,6 +83,8 @@ public final class ActionBarSupportImpl extends ActionBar {
 				mActionBar.setTitle(actInfo.loadLabel(pm));
 			}
 		}
+		
+		final ActionBarView.HomeItem homeItem = mActionBar.getHomeItem();
 		if (homeItem.getIcon() == null) {
 			if ((actInfo != null) && (actInfo.icon != 0)) {
 				//Load the icon from the activity entry

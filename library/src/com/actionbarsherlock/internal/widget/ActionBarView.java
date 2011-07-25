@@ -75,9 +75,7 @@ public final class ActionBarView extends RelativeLayout {
 	 */
 	private int mNavigationMode = -1;
 	
-	/** Whether text is shown on action items regardless of display params. */
-	private boolean mIsActionItemTextEnabled = false;
-	
+	/** Indicate we are in the constructor so reloadDisplay() is not called. */
 	private boolean mIsConstructing;
 	
 	private MenuBuilder mOptionsMenu;
@@ -536,7 +534,7 @@ public final class ActionBarView extends RelativeLayout {
 	// ACTION ITEMS SUPPORT
 	// ------------------------------------------------------------------------
 	
-	public ActionBarView.Item getHomeItem() {
+	public ActionBarView.HomeItem getHomeItem() {
 		return mHome;
 	}
 	
@@ -559,155 +557,7 @@ public final class ActionBarView extends RelativeLayout {
 	// HELPER INTERFACES AND HELPER CLASSES
 	// ------------------------------------------------------------------------
 	
-	public static abstract class Item extends RelativeLayout {
-		public Item(Context context) {
-			super(context);
-		}
-		public Item(Context context, AttributeSet attrs) {
-			super(context, attrs);
-		}
-		public Item(Context context, AttributeSet attrs, int defStyle) {
-			super(context, attrs, defStyle);
-		}
-		
-		public abstract View getCustomView();
-		public abstract Item setCustomView(int resId);
-		public abstract Item setCustomView(View view);
-		
-		public abstract Drawable getIcon();
-		public abstract Item setIcon(int resId);
-		public abstract Item setIcon(Drawable icon);
-		
-		public abstract Drawable getLogo();
-		public abstract Item setLogo(int resId);
-		public abstract Item setLogo(Drawable logo);
-		
-		public abstract CharSequence getTitle();
-		public abstract Item setTitle(int resId);
-		public abstract Item setTitle(CharSequence title);
-	}
-	
-	public static final class ActionItem extends Item {
-		ActionBarView mActionBar;
-		ImageView mIconView;
-		TextView mTextView;
-		FrameLayout mCustomView;
-
-
-		public ActionItem(Context context) {
-			this(context, null);
-		}
-		public ActionItem(Context context, AttributeSet attrs) {
-			this(context, attrs, R.attr.actionButtonStyle);
-		}
-		public ActionItem(Context context, AttributeSet attrs, int defStyle) {
-			super(context, attrs, defStyle);
-		}
-		
-		
-		@Override
-		protected void onFinishInflate() {
-			super.onFinishInflate();
-
-			mIconView = (ImageView)findViewById(R.id.actionbarwatson_item_icon);
-			mTextView = (TextView)findViewById(R.id.actionbarwatson_item_text);
-			mCustomView = (FrameLayout)findViewById(R.id.actionbarwatson_item_custom);
-		}
-		
-		void reloadDisplay() {
-			final boolean hasCustomView = mCustomView.getChildCount() > 0;
-			final boolean hasText = (mTextView.getText() != null) && !mTextView.getText().equals("");
-			
-			mIconView.setVisibility(!hasCustomView ? View.VISIBLE : View.GONE);
-			mTextView.setVisibility(!hasCustomView && hasText && mActionBar.mIsActionItemTextEnabled ? View.VISIBLE : View.GONE);
-			mCustomView.setVisibility(hasCustomView ? View.VISIBLE : View.GONE);
-		}
-		
-		void setActionBar(ActionBarView actionBar) {
-			mActionBar = actionBar;
-		}
-		
-		@Override
-		public View getCustomView() {
-			return mCustomView;
-		}
-		
-		@Override
-		public ActionItem setCustomView(int resId) {
-			mCustomView.removeAllViews();
-			LayoutInflater.from(getContext()).inflate(resId, mCustomView, true);
-			reloadDisplay();
-			return this;
-		}
-		
-		@Override
-		public ActionItem setCustomView(View view) {
-			mCustomView.removeAllViews();
-			if (view != null) {
-				mCustomView.addView(view);
-			}
-			reloadDisplay();
-			return this;
-		}
-		
-		@Override
-		public Drawable getIcon() {
-			return mIconView.getDrawable();
-		}
-		
-		@Override
-		public ActionItem setIcon(int resId) {
-			if (resId != View.NO_ID) {
-				mIconView.setImageResource(resId);
-			}
-			return this;
-		}
-		
-		@Override
-		public ActionItem setIcon(Drawable icon) {
-			mIconView.setImageDrawable(icon);
-			return this;
-		}
-		
-		@Override
-		public Drawable getLogo() {
-			//Not implemented
-			return null;
-		}
-		
-		@Override
-		public ActionItem setLogo(int resId) {
-			//Not implemented
-			return this;
-		}
-		
-		@Override
-		public ActionItem setLogo(Drawable logo) {
-			//Not implemented
-			return this;
-		}
-
-		@Override
-		public CharSequence getTitle() {
-			return mTextView.getText();
-		}
-		
-		@Override
-		public ActionItem setTitle(int resId) {
-			mTextView.setText(resId);
-			reloadDisplay();
-			return this;
-		}
-		
-		@Override
-		public ActionItem setTitle(CharSequence title) {
-			mTextView.setText(title);
-			reloadDisplay();
-			return this;
-		}
-	}
-	
-	public static final class HomeItem extends Item {
+	public static final class HomeItem extends RelativeLayout {
 		/** Home logo. */
 		private final ImageView mLogo;
 		
@@ -752,73 +602,31 @@ public final class ActionBarView extends RelativeLayout {
 			mUpIndicator.setVisibility(visibility);
 		}
 		
-		@Override
-		public View getCustomView() {
-			//Not implemented
-			return null;
-		}
-		
-		@Override
-		public Item setCustomView(int resId) {
-			//Not implemented
-			return this;
-		}
-		
-		@Override
-		public Item setCustomView(View view) {
-			//Not implemented
-			return this;
-		}
-		
-		@Override
 		public Drawable getIcon() {
 			return mIcon.getDrawable();
 		}
 		
-		@Override
 		public HomeItem setIcon(int resId) {
 			mIcon.setImageResource(resId);
 			return this;
 		}
 		
-		@Override
 		public HomeItem setIcon(Drawable icon) {
 			mIcon.setImageDrawable(icon);
 			return this;
 		}
 		
-		@Override
 		public Drawable getLogo() {
 			return mLogo.getDrawable();
 		}
 		
-		@Override
 		public HomeItem setLogo(int resId) {
 			mLogo.setImageResource(resId);
 			return this;
 		}
 		
-		@Override
 		public HomeItem setLogo(Drawable logo) {
 			mLogo.setImageDrawable(logo);
-			return this;
-		}
-		
-		@Override
-		public CharSequence getTitle() {
-			//Not implemented
-			return null;
-		}
-		
-		@Override
-		public HomeItem setTitle(int resId) {
-			//Not implemented
-			return this;
-		}
-		
-		@Override
-		public HomeItem setTitle(CharSequence title) {
-			//Not implemented
 			return this;
 		}
 	}
