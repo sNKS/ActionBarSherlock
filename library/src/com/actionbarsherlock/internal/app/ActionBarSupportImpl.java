@@ -34,323 +34,323 @@ import com.actionbarsherlock.R;
 import com.actionbarsherlock.internal.widget.ActionBarView;
 
 public final class ActionBarSupportImpl extends ActionBar {
-	/** Action bar view. */
-	private ActionBarView mActionBar;
-	
-	/** List of listeners to the menu visibility. */
-	private final List<OnMenuVisibilityListener> mMenuListeners = new ArrayList<OnMenuVisibilityListener>();
-	
-	/** Whether display of the indeterminate progress is allowed. */
-	private boolean mHasIndeterminateProgress = false;
-	
-	
-	
-	public ActionBarSupportImpl(FragmentActivity activity) {
-		super(activity);
-	}
-	
-	
-	// ------------------------------------------------------------------------
-	// ACTION BAR SHERLOCK SUPPORT
-	// ------------------------------------------------------------------------
-	
-	@Override
-	protected ActionBar getPublicInstance() {
-		return (mActionBar != null) ? this : null;
-	}
-	
-	public void init(View view) {
-		mActionBar = (ActionBarView)view.findViewById(R.id.action_bar);
-		
-		if (mActionBar == null) {
-			throw new IllegalStateException(getClass().getSimpleName() + " can only be used with a screen_*.xml layout");
-		}
+    /** Action bar view. */
+    private ActionBarView mActionBar;
 
-		final PackageManager pm = getActivity().getPackageManager();
-		final ApplicationInfo appInfo = getActivity().getApplicationInfo();
-		ActivityInfo actInfo = null;
-		try {
-			actInfo = pm.getActivityInfo(getActivity().getComponentName(), PackageManager.GET_ACTIVITIES);
-		} catch (NameNotFoundException e) {}
+    /** List of listeners to the menu visibility. */
+    private final List<OnMenuVisibilityListener> mMenuListeners = new ArrayList<OnMenuVisibilityListener>();
 
-		
-		if (mActionBar.getTitle() == null) {
-			if ((actInfo != null) && (actInfo.labelRes != 0)) {
-				//Load label string resource from the activity entry
-				mActionBar.setTitle(actInfo.labelRes);
-			} else {
-				//No activity label string resource and none in theme
-				mActionBar.setTitle(actInfo.loadLabel(pm));
-			}
-		}
-		
-		final ActionBarView.HomeItem homeItem = mActionBar.getHomeItem();
-		if (homeItem.getIcon() == null) {
-			if ((actInfo != null) && (actInfo.icon != 0)) {
-				//Load the icon from the activity entry
-				homeItem.setIcon(actInfo.icon);
-			} else {
-				//No activity icon and none in theme
-				homeItem.setIcon(pm.getApplicationIcon(appInfo));
-			}
-		}
-		
-		//LOGO LOADING DOES NOT WORK
-		//SEE: http://stackoverflow.com/questions/6105504/load-activity-and-or-application-logo-programmatically-from-manifest
-		//SEE: https://groups.google.com/forum/#!topic/android-developers/UFR4l0ZwJWc
-	}
-	
-	public void setMenu(Menu menu) {
-		mActionBar.setMenu(menu);
-	}
-	
-	public void onMenuVisibilityChanged(boolean isVisible) {
-		//Marshal to all listeners
-		for (OnMenuVisibilityListener listener : mMenuListeners) {
-			listener.onMenuVisibilityChanged(isVisible);
-		}
-	}
-	
-	public void setWindowActionBarItemTextEnabled(boolean enabled) {
-		//TODO pass to menu view
-	}
-	
-	public void setWindowIndeterminateProgressEnabled(boolean enabled) {
-		mHasIndeterminateProgress = enabled;
-	}
-	
-	public void setProgressBarIndeterminateVisibility(boolean visible) {
-		if (mHasIndeterminateProgress) {
-			mActionBar.setProgressBarIndeterminateVisibility(visible);
-		}
-	}
-	
-	// ------------------------------------------------------------------------
-	// ACTION MODE METHODS
-	// ------------------------------------------------------------------------
+    /** Whether display of the indeterminate progress is allowed. */
+    private boolean mHasIndeterminateProgress = false;
 
-	@Override
-	protected ActionMode startActionMode(ActionMode.Callback callback) {
-		throw new RuntimeException("Not implemented.");
-	}
-	
-	// ------------------------------------------------------------------------
-	// ACTION BAR METHODS
-	// ------------------------------------------------------------------------
 
-	@Override
-	public void addOnMenuVisibilityListener(OnMenuVisibilityListener listener) {
-		if (!mMenuListeners.contains(listener)) {
-			mMenuListeners.add(listener);
-		}
-	}
 
-	@Override
-	public void addTab(Tab tab) {
-		mActionBar.addTab(tab);
-	}
+    public ActionBarSupportImpl(FragmentActivity activity) {
+        super(activity);
+    }
 
-	@Override
-	public void addTab(Tab tab, boolean setSelected) {
-		mActionBar.addTab(tab, setSelected);
-	}
 
-	@Override
-	public void addTab(Tab tab, int position) {
-		mActionBar.addTab(tab, position);
-	}
+    // ------------------------------------------------------------------------
+    // ACTION BAR SHERLOCK SUPPORT
+    // ------------------------------------------------------------------------
 
-	@Override
-	public void addTab(ActionBar.Tab tab, int position, boolean setSelected) {
-		mActionBar.addTab(tab, position, setSelected);
-	}
-	
-	@Override
-	public View getCustomView() {
-		return mActionBar.getCustomView();
-	}
-	
-	@Override
-	public int getDisplayOptions() {
-		return mActionBar.getDisplayOptions();
-	}
+    @Override
+    protected ActionBar getPublicInstance() {
+        return (mActionBar != null) ? this : null;
+    }
 
-	@Override
-	public int getHeight() {
-		return mActionBar.getHeight();
-	}
+    public void init() {
+        mActionBar = (ActionBarView)getActivity().findViewById(R.id.action_bar);
 
-	@Override
-	public int getNavigationItemCount() {
-		return mActionBar.getNavigationItemCount();
-	}
+        if (mActionBar == null) {
+            throw new IllegalStateException(getClass().getSimpleName() + " can only be used with a screen_*.xml layout");
+        }
 
-	@Override
-	public int getNavigationMode() {
-		return mActionBar.getNavigationMode();
-	}
+        final PackageManager pm = getActivity().getPackageManager();
+        final ApplicationInfo appInfo = getActivity().getApplicationInfo();
+        ActivityInfo actInfo = null;
+        try {
+            actInfo = pm.getActivityInfo(getActivity().getComponentName(), PackageManager.GET_ACTIVITIES);
+        } catch (NameNotFoundException e) {}
 
-	@Override
-	public int getSelectedNavigationIndex() {
-		return mActionBar.getSelectedNavigationIndex();
-	}
 
-	@Override
-	public ActionBar.Tab getSelectedTab() {
-		return mActionBar.getSelectedTab();
-	}
+        if (mActionBar.getTitle() == null) {
+            if ((actInfo != null) && (actInfo.labelRes != 0)) {
+                //Load label string resource from the activity entry
+                mActionBar.setTitle(actInfo.labelRes);
+            } else {
+                //No activity label string resource and none in theme
+                mActionBar.setTitle(actInfo.loadLabel(pm));
+            }
+        }
 
-	@Override
-	public CharSequence getSubtitle() {
-		return mActionBar.getSubtitle();
-	}
+        final ActionBarView.HomeItem homeItem = mActionBar.getHomeItem();
+        if (homeItem.getIcon() == null) {
+            if ((actInfo != null) && (actInfo.icon != 0)) {
+                //Load the icon from the activity entry
+                homeItem.setIcon(actInfo.icon);
+            } else {
+                //No activity icon and none in theme
+                homeItem.setIcon(pm.getApplicationIcon(appInfo));
+            }
+        }
 
-	@Override
-	public ActionBar.Tab getTabAt(int index) {
-		return mActionBar.getTabAt(index);
-	}
+        //LOGO LOADING DOES NOT WORK
+        //SEE: http://stackoverflow.com/questions/6105504/load-activity-and-or-application-logo-programmatically-from-manifest
+        //SEE: https://groups.google.com/forum/#!topic/android-developers/UFR4l0ZwJWc
+    }
 
-	@Override
-	public int getTabCount() {
-		return mActionBar.getTabCount();
-	}
+    public void setMenu(Menu menu) {
+        mActionBar.setMenu(menu);
+    }
 
-	@Override
-	public CharSequence getTitle() {
-		return mActionBar.getTitle();
-	}
+    public void onMenuVisibilityChanged(boolean isVisible) {
+        //Marshal to all listeners
+        for (OnMenuVisibilityListener listener : mMenuListeners) {
+            listener.onMenuVisibilityChanged(isVisible);
+        }
+    }
 
-	@Override
-	public void hide() {
-		mActionBar.hide();
-	}
+    public void setWindowActionBarItemTextEnabled(boolean enabled) {
+        //TODO pass to menu view;
+    }
 
-	@Override
-	public boolean isShowing() {
-		return mActionBar.isShowing();
-	}
-	
-	@Override
-	public ActionBar.Tab newTab() {
-		return mActionBar.newTab();
-	}
+    public void setWindowIndeterminateProgressEnabled(boolean enabled) {
+        mHasIndeterminateProgress = enabled;
+    }
 
-	@Override
-	public void removeAllTabs() {
-		mActionBar.removeAllTabs();
-	}
+    public void setProgressBarIndeterminateVisibility(boolean visible) {
+        if (mHasIndeterminateProgress) {
+            mActionBar.setProgressBarIndeterminateVisibility(visible);
+        }
+    }
 
-	@Override
-	public void removeOnMenuVisibilityListener(OnMenuVisibilityListener listener) {
-		mMenuListeners.remove(listener);
-	}
+    // ------------------------------------------------------------------------
+    // ACTION MODE METHODS
+    // ------------------------------------------------------------------------
 
-	@Override
-	public void removeTab(ActionBar.Tab tab) {
-		mActionBar.removeTab(tab);
-	}
+    @Override
+    protected ActionMode startActionMode(ActionMode.Callback callback) {
+        throw new RuntimeException("Not implemented.");
+    }
 
-	@Override
-	public void removeTabAt(int position) {
-		mActionBar.removeTabAt(position);
-	}
+    // ------------------------------------------------------------------------
+    // ACTION BAR METHODS
+    // ------------------------------------------------------------------------
 
-	@Override
-	public void setBackgroundDrawable(Drawable d) {
-		mActionBar.setBackgroundDrawable(d);
-	}
+    @Override
+    public void addOnMenuVisibilityListener(OnMenuVisibilityListener listener) {
+        if (!mMenuListeners.contains(listener)) {
+            mMenuListeners.add(listener);
+        }
+    }
 
-	@Override
-	public void setCustomView(int resId) {
-		mActionBar.setCustomView(resId);
-	}
+    @Override
+    public void addTab(Tab tab) {
+        mActionBar.addTab(tab);
+    }
 
-	@Override
-	public void setCustomView(View view) {
-		mActionBar.setCustomView(view);
-	}
-	
-	@Override
-	public void setCustomView(View view, ActionBar.LayoutParams layoutParams) {
-		mActionBar.setCustomView(view, layoutParams);
-	}
+    @Override
+    public void addTab(Tab tab, boolean setSelected) {
+        mActionBar.addTab(tab, setSelected);
+    }
 
-	@Override
-	public void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
-		mActionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
-	}
+    @Override
+    public void addTab(Tab tab, int position) {
+        mActionBar.addTab(tab, position);
+    }
 
-	@Override
-	public void setDisplayOptions(int options, int mask) {
-		mActionBar.setDisplayOptions(options, mask);
-	}
+    @Override
+    public void addTab(ActionBar.Tab tab, int position, boolean setSelected) {
+        mActionBar.addTab(tab, position, setSelected);
+    }
 
-	@Override
-	public void setDisplayOptions(int options) {
-		mActionBar.setDisplayOptions(options);
-	}
+    @Override
+    public View getCustomView() {
+        return mActionBar.getCustomView();
+    }
 
-	@Override
-	public void setDisplayShowCustomEnabled(boolean showCustom) {
-		mActionBar.setDisplayShowCustomEnabled(showCustom);
-	}
+    @Override
+    public int getDisplayOptions() {
+        return mActionBar.getDisplayOptions();
+    }
 
-	@Override
-	public void setDisplayShowHomeEnabled(boolean showHome) {
-		mActionBar.setDisplayShowHomeEnabled(showHome);
-	}
+    @Override
+    public int getHeight() {
+        return mActionBar.getHeight();
+    }
 
-	@Override
-	public void setDisplayShowTitleEnabled(boolean showTitle) {
-		mActionBar.setDisplayShowTitleEnabled(showTitle);
-	}
+    @Override
+    public int getNavigationItemCount() {
+        return mActionBar.getNavigationItemCount();
+    }
 
-	@Override
-	public void setDisplayUseLogoEnabled(boolean useLogo) {
-		mActionBar.setDisplayUseLogoEnabled(useLogo);
-	}
+    @Override
+    public int getNavigationMode() {
+        return mActionBar.getNavigationMode();
+    }
 
-	@Override
-	public void setListNavigationCallbacks(SpinnerAdapter adapter, ActionBar.OnNavigationListener callback) {
-		mActionBar.setListNavigationCallbacks(adapter, callback);
-	}
+    @Override
+    public int getSelectedNavigationIndex() {
+        return mActionBar.getSelectedNavigationIndex();
+    }
 
-	@Override
-	public void setNavigationMode(int mode) {
-		mActionBar.setNavigationMode(mode);
-	}
+    @Override
+    public ActionBar.Tab getSelectedTab() {
+        return mActionBar.getSelectedTab();
+    }
 
-	@Override
-	public void setSelectedNavigationItem(int position) {
-		mActionBar.setSelectedNavigationItem(position);
-	}
+    @Override
+    public CharSequence getSubtitle() {
+        return mActionBar.getSubtitle();
+    }
 
-	@Override
-	public void selectTab(ActionBar.Tab tab) {
-		mActionBar.selectTab(tab);
-	}
+    @Override
+    public ActionBar.Tab getTabAt(int index) {
+        return mActionBar.getTabAt(index);
+    }
 
-	@Override
-	public void setSubtitle(CharSequence subtitle) {
-		mActionBar.setSubtitle(subtitle);
-	}
+    @Override
+    public int getTabCount() {
+        return mActionBar.getTabCount();
+    }
 
-	@Override
-	public void setSubtitle(int resId) {
-		mActionBar.setSubtitle(resId);
-	}
+    @Override
+    public CharSequence getTitle() {
+        return mActionBar.getTitle();
+    }
 
-	@Override
-	public void setTitle(CharSequence title) {
-		mActionBar.setTitle(title);
-	}
-	@Override
-	public void setTitle(int resId) {
-		mActionBar.setTitle(resId);
-	}
+    @Override
+    public void hide() {
+        mActionBar.hide();
+    }
 
-	@Override
-	public void show() {
-		mActionBar.show();
-	}
+    @Override
+    public boolean isShowing() {
+        return mActionBar.isShowing();
+    }
+
+    @Override
+    public ActionBar.Tab newTab() {
+        return mActionBar.newTab();
+    }
+
+    @Override
+    public void removeAllTabs() {
+        mActionBar.removeAllTabs();
+    }
+
+    @Override
+    public void removeOnMenuVisibilityListener(OnMenuVisibilityListener listener) {
+        mMenuListeners.remove(listener);
+    }
+
+    @Override
+    public void removeTab(ActionBar.Tab tab) {
+        mActionBar.removeTab(tab);
+    }
+
+    @Override
+    public void removeTabAt(int position) {
+        mActionBar.removeTabAt(position);
+    }
+
+    @Override
+    public void setBackgroundDrawable(Drawable d) {
+        mActionBar.setBackgroundDrawable(d);
+    }
+
+    @Override
+    public void setCustomView(int resId) {
+        mActionBar.setCustomView(resId);
+    }
+
+    @Override
+    public void setCustomView(View view) {
+        mActionBar.setCustomView(view);
+    }
+
+    @Override
+    public void setCustomView(View view, ActionBar.LayoutParams layoutParams) {
+        mActionBar.setCustomView(view, layoutParams);
+    }
+
+    @Override
+    public void setDisplayHomeAsUpEnabled(boolean showHomeAsUp) {
+        mActionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
+    }
+
+    @Override
+    public void setDisplayOptions(int options, int mask) {
+        mActionBar.setDisplayOptions(options, mask);
+    }
+
+    @Override
+    public void setDisplayOptions(int options) {
+        mActionBar.setDisplayOptions(options);
+    }
+
+    @Override
+    public void setDisplayShowCustomEnabled(boolean showCustom) {
+        mActionBar.setDisplayShowCustomEnabled(showCustom);
+    }
+
+    @Override
+    public void setDisplayShowHomeEnabled(boolean showHome) {
+        mActionBar.setDisplayShowHomeEnabled(showHome);
+    }
+
+    @Override
+    public void setDisplayShowTitleEnabled(boolean showTitle) {
+        mActionBar.setDisplayShowTitleEnabled(showTitle);
+    }
+
+    @Override
+    public void setDisplayUseLogoEnabled(boolean useLogo) {
+        mActionBar.setDisplayUseLogoEnabled(useLogo);
+    }
+
+    @Override
+    public void setListNavigationCallbacks(SpinnerAdapter adapter, ActionBar.OnNavigationListener callback) {
+        mActionBar.setListNavigationCallbacks(adapter, callback);
+    }
+
+    @Override
+    public void setNavigationMode(int mode) {
+        mActionBar.setNavigationMode(mode);
+    }
+
+    @Override
+    public void setSelectedNavigationItem(int position) {
+        mActionBar.setSelectedNavigationItem(position);
+    }
+
+    @Override
+    public void selectTab(ActionBar.Tab tab) {
+        mActionBar.selectTab(tab);
+    }
+
+    @Override
+    public void setSubtitle(CharSequence subtitle) {
+        mActionBar.setSubtitle(subtitle);
+    }
+
+    @Override
+    public void setSubtitle(int resId) {
+        mActionBar.setSubtitle(resId);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mActionBar.setTitle(title);
+    }
+    @Override
+    public void setTitle(int resId) {
+        mActionBar.setTitle(resId);
+    }
+
+    @Override
+    public void show() {
+        mActionBar.show();
+    }
 }

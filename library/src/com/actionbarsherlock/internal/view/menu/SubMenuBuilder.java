@@ -29,7 +29,7 @@ import android.view.View;
 public final class SubMenuBuilder extends MenuBuilder implements SubMenu {
     private MenuBuilder mParentMenu;
     private MenuItemImpl mItem;
-    
+
     public SubMenuBuilder(Context context, MenuBuilder parentMenu, MenuItemImpl item) {
         super(context);
 
@@ -46,7 +46,7 @@ public final class SubMenuBuilder extends MenuBuilder implements SubMenu {
     //public boolean isQwertyMode() {
     //    return mParentMenu.isQwertyMode();
     //}
-    
+
     //@Override
     //public void setShortcutsVisible(boolean shortcutsVisible) {
     //    mParentMenu.setShortcutsVisible(shortcutsVisible);
@@ -81,45 +81,45 @@ public final class SubMenuBuilder extends MenuBuilder implements SubMenu {
         return mParentMenu;
     }
 
-	@Override
+    @Override
     public SubMenuBuilder setIcon(Drawable icon) {
         mItem.setIcon(icon);
         return this;
     }
 
-	@Override
+    @Override
     public SubMenuBuilder setIcon(int iconRes) {
         mItem.setIcon(iconRes);
         return this;
     }
 
-	@Override
+    @Override
     public SubMenuBuilder setHeaderIcon(Drawable icon) {
-		throw new RuntimeException("Method not supported.");
+        throw new RuntimeException("Method not supported.");
     }
 
-	@Override
+    @Override
     public SubMenuBuilder setHeaderIcon(int iconRes) {
-		throw new RuntimeException("Method not supported.");
+        throw new RuntimeException("Method not supported.");
     }
 
-	@Override
+    @Override
     public SubMenuBuilder setHeaderTitle(CharSequence title) {
-		throw new RuntimeException("Method not supported.");
+        throw new RuntimeException("Method not supported.");
     }
 
-	@Override
+    @Override
     public SubMenuBuilder setHeaderTitle(int titleRes) {
-		throw new RuntimeException("Method not supported.");
+        throw new RuntimeException("Method not supported.");
     }
 
-	@Override
+    @Override
     public SubMenuBuilder setHeaderView(View view) {
-		throw new RuntimeException("Method not supported.");
+        throw new RuntimeException("Method not supported.");
     }
 
-	@Override
-	public void clearHeader() {
-		throw new RuntimeException("Method not supported.");
-	}
+    @Override
+    public void clearHeader() {
+        throw new RuntimeException("Method not supported.");
+    }
 }
