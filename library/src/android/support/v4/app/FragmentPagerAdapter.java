@@ -23,7 +23,7 @@ import android.view.View;
 
 /**
  * Implementation of {@link android.support.v4.view.PagerAdapter} that
- * represents each page as a {@link Fragment} that is persistently
+ * represents each page as a {@link FRAGMENT} that is persistently
  * kept in the fragment manager as long as the user can return to the page.
  */
 public abstract class FragmentPagerAdapter extends PagerAdapter {
@@ -38,7 +38,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
     }
 
     /**
-     * Return the Fragment associated with a specified position.
+     * Return the FRAGMENT associated with a specified position.
      */
     public abstract Fragment getItem(int position);
 

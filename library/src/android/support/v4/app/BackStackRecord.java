@@ -58,9 +58,9 @@ final class BackStackState implements Parcelable {
             mOps[pos++] = op.enterAnim;
             mOps[pos++] = op.exitAnim;
             if (op.removed != null) {
-                final int N = op.removed.size();
-                mOps[pos++] = N;
-                for (int i=0; i<N; i++) {
+                final int n = op.removed.size();
+                mOps[pos++] = n;
+                for (int i=0; i<n; i++) {
                     mOps[pos++] = op.removed.get(i).mIndex;
                 }
             } else {
@@ -96,17 +96,17 @@ final class BackStackState implements Parcelable {
         while (pos < mOps.length) {
             BackStackRecord.Op op = new BackStackRecord.Op();
             op.cmd = mOps[pos++];
-            if (FragmentManagerImpl.DEBUG) Log.v(FragmentManagerImpl.TAG,
+            if (FragmentManagerImpl.debug) Log.v(FragmentManagerImpl.TAG,
                     "BSE " + bse + " set base fragment #" + mOps[pos]);
             Fragment f = fm.mActive.get(mOps[pos++]);
             op.fragment = f;
             op.enterAnim = mOps[pos++];
             op.exitAnim = mOps[pos++];
-            final int N = mOps[pos++];
-            if (N > 0) {
-                op.removed = new ArrayList<Fragment>(N);
-                for (int i=0; i<N; i++) {
-                    if (FragmentManagerImpl.DEBUG) Log.v(FragmentManagerImpl.TAG,
+            final int n = mOps[pos++];
+            if (n > 0) {
+                op.removed = new ArrayList<Fragment>(n);
+                for (int i=0; i<n; i++) {
+                    if (FragmentManagerImpl.debug) Log.v(FragmentManagerImpl.TAG,
                             "BSE " + bse + " set remove fragment #" + mOps[pos]);
                     Fragment r = fm.mActive.get(mOps[pos++]);
                     op.removed.add(r);
@@ -324,7 +324,7 @@ final class BackStackRecord extends FragmentTransaction implements
 
     private void doAddOp(int containerViewId, Fragment fragment, String tag, int opcmd) {
         if (fragment.mImmediateActivity != null) {
-            throw new IllegalStateException("Fragment already added: " + fragment);
+            throw new IllegalStateException("FRAGMENT already added: " + fragment);
         }
         fragment.mImmediateActivity = mManager.mActivity;
         fragment.mFragmentManager = mManager;
@@ -374,7 +374,7 @@ final class BackStackRecord extends FragmentTransaction implements
 
     public FragmentTransaction remove(Fragment fragment) {
         if (fragment.mImmediateActivity == null) {
-            throw new IllegalStateException("Fragment not added: " + fragment);
+            throw new IllegalStateException("FRAGMENT not added: " + fragment);
         }
         fragment.mImmediateActivity = null;
 
@@ -388,7 +388,7 @@ final class BackStackRecord extends FragmentTransaction implements
 
     public FragmentTransaction hide(Fragment fragment) {
         if (fragment.mImmediateActivity == null) {
-            throw new IllegalStateException("Fragment not added: " + fragment);
+            throw new IllegalStateException("FRAGMENT not added: " + fragment);
         }
 
         Op op = new Op();
@@ -401,7 +401,7 @@ final class BackStackRecord extends FragmentTransaction implements
 
     public FragmentTransaction show(Fragment fragment) {
         if (fragment.mImmediateActivity == null) {
-            throw new IllegalStateException("Fragment not added: " + fragment);
+            throw new IllegalStateException("FRAGMENT not added: " + fragment);
         }
 
         Op op = new Op();
@@ -414,7 +414,7 @@ final class BackStackRecord extends FragmentTransaction implements
 
     public FragmentTransaction detach(Fragment fragment) {
         //if (fragment.mImmediateActivity == null) {
-        //    throw new IllegalStateException("Fragment not added: " + fragment);
+        //    throw new IllegalStateException("FRAGMENT not added: " + fragment);
         //}
 
         Op op = new Op();
@@ -427,7 +427,7 @@ final class BackStackRecord extends FragmentTransaction implements
 
     public FragmentTransaction attach(Fragment fragment) {
         //if (fragment.mImmediateActivity == null) {
-        //    throw new IllegalStateException("Fragment not added: " + fragment);
+        //    throw new IllegalStateException("FRAGMENT not added: " + fragment);
         //}
 
         Op op = new Op();
@@ -505,18 +505,18 @@ final class BackStackRecord extends FragmentTransaction implements
         if (!mAddToBackStack) {
             return;
         }
-        if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Bump nesting in " + this
+        if (FragmentManagerImpl.debug) Log.v(TAG, "Bump nesting in " + this
                 + " by " + amt);
         Op op = mHead;
         while (op != null) {
             op.fragment.mBackStackNesting += amt;
-            if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Bump nesting of "
+            if (FragmentManagerImpl.debug) Log.v(TAG, "Bump nesting of "
                     + op.fragment + " to " + op.fragment.mBackStackNesting);
             if (op.removed != null) {
                 for (int i=op.removed.size()-1; i>=0; i--) {
                     Fragment r = op.removed.get(i);
                     r.mBackStackNesting += amt;
-                    if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Bump nesting of "
+                    if (FragmentManagerImpl.debug) Log.v(TAG, "Bump nesting of "
                             + r + " to " + r.mBackStackNesting);
                 }
             }
@@ -534,7 +534,7 @@ final class BackStackRecord extends FragmentTransaction implements
 
     int commitInternal(boolean allowStateLoss) {
         if (mCommitted) throw new IllegalStateException("commit already called");
-        if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Commit: " + this);
+        if (FragmentManagerImpl.debug) Log.v(TAG, "Commit: " + this);
         mCommitted = true;
         if (mAddToBackStack) {
             mIndex = mManager.allocBackStackIndex(this);
@@ -546,7 +546,7 @@ final class BackStackRecord extends FragmentTransaction implements
     }
 
     public void run() {
-        if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Run: " + this);
+        if (FragmentManagerImpl.debug) Log.v(TAG, "Run: " + this);
 
         if (mAddToBackStack) {
             if (mIndex < 0) {
@@ -569,7 +569,7 @@ final class BackStackRecord extends FragmentTransaction implements
                     if (mManager.mAdded != null) {
                         for (int i=0; i<mManager.mAdded.size(); i++) {
                             Fragment old = mManager.mAdded.get(i);
-                            if (FragmentManagerImpl.DEBUG) Log.v(TAG,
+                            if (FragmentManagerImpl.debug) Log.v(TAG,
                                     "OP_REPLACE: adding=" + f + " old=" + old);
                             if (old.mContainerId == f.mContainerId) {
                                 if (op.removed == null) {
@@ -579,7 +579,7 @@ final class BackStackRecord extends FragmentTransaction implements
                                 old.mNextAnim = op.exitAnim;
                                 if (mAddToBackStack) {
                                     old.mBackStackNesting += 1;
-                                    if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Bump nesting of "
+                                    if (FragmentManagerImpl.debug) Log.v(TAG, "Bump nesting of "
                                             + old + " to " + old.mBackStackNesting);
                                 }
                                 mManager.removeFragment(old, mTransition, mTransitionStyle);
@@ -631,7 +631,7 @@ final class BackStackRecord extends FragmentTransaction implements
     }
 
     public void popFromBackStack(boolean doStateMove) {
-        if (FragmentManagerImpl.DEBUG) Log.v(TAG, "popFromBackStack: " + this);
+        if (FragmentManagerImpl.debug) Log.v(TAG, "popFromBackStack: " + this);
 
         bumpBackStackNesting(-1);
 

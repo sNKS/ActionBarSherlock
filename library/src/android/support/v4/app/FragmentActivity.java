@@ -56,7 +56,7 @@ import android.widget.FrameLayout;
 
 /**
  * Base class for activities that want to use the support-based ActionBar,
- * Fragment, and Loader APIs.
+ * FRAGMENT, and Loader APIs.
  *
  * <p>Known limitations:</p>
  * <ul>
@@ -167,12 +167,12 @@ public class FragmentActivity extends Activity {
     }
 
     static class FragmentTag {
-        public static final int[] Fragment = {
+        public static final int[] FRAGMENT = {
             0x01010003, 0x010100d0, 0x010100d1
         };
-        public static final int Fragment_id = 1;
-        public static final int Fragment_name = 0;
-        public static final int Fragment_tag = 2;
+        public static final int FRAGMENT_ID = 1;
+        public static final int FRAGMENT_NAME = 0;
+        public static final int FRAGMENT_TAG = 2;
     }
 
 
@@ -463,12 +463,12 @@ public class FragmentActivity extends Activity {
         }
 
         String fname = attrs.getAttributeValue(null, "class");
-        TypedArray a =  context.obtainStyledAttributes(attrs, FragmentTag.Fragment);
+        TypedArray a =  context.obtainStyledAttributes(attrs, FragmentTag.FRAGMENT);
         if (fname == null) {
-            fname = a.getString(FragmentTag.Fragment_name);
+            fname = a.getString(FragmentTag.FRAGMENT_NAME);
         }
-        int id = a.getResourceId(FragmentTag.Fragment_id, View.NO_ID);
-        String tag = a.getString(FragmentTag.Fragment_tag);
+        int id = a.getResourceId(FragmentTag.FRAGMENT_ID, View.NO_ID);
+        String tag = a.getString(FragmentTag.FRAGMENT_TAG);
         a.recycle();
 
         View parent = null; // NOTE: no way to get parent pre-Honeycomb.
@@ -489,7 +489,7 @@ public class FragmentActivity extends Activity {
             fragment = mFragments.findFragmentById(containerId);
         }
 
-        if (FragmentManagerImpl.DEBUG) Log.v(TAG, "onCreateView: id=0x"
+        if (FragmentManagerImpl.debug) Log.v(TAG, "onCreateView: id=0x"
                 + Integer.toHexString(id) + " fname=" + fname
                 + " existing=" + fragment);
         if (fragment == null) {
@@ -526,7 +526,7 @@ public class FragmentActivity extends Activity {
         }
 
         if (fragment.mView == null) {
-            throw new IllegalStateException("Fragment " + fname
+            throw new IllegalStateException("FRAGMENT " + fname
                     + " did not create a view.");
         }
         if (id != 0) {
@@ -1099,7 +1099,7 @@ public class FragmentActivity extends Activity {
     }
 
     /**
-     * Called by Fragment.startActivityForResult() to implement its behavior.
+     * Called by FRAGMENT.startActivityForResult() to implement its behavior.
      */
     public void startActivityFromFragment(Fragment fragment, Intent intent,
             int requestCode) {

@@ -25,18 +25,18 @@ package android.support.v4.app;
  */
 public abstract class FragmentTransaction {
     /**
-     * Calls {@link #add(int, Fragment, String)} with a 0 containerViewId.
+     * Calls {@link #add(int, FRAGMENT, String)} with a 0 containerViewId.
      */
     public abstract FragmentTransaction add(Fragment fragment, String tag);
 
     /**
-     * Calls {@link #add(int, Fragment, String)} with a null tag.
+     * Calls {@link #add(int, FRAGMENT, String)} with a null tag.
      */
     public abstract FragmentTransaction add(int containerViewId, Fragment fragment);
 
     /**
      * Add a fragment to the activity state.  This fragment may optionally
-     * also have its view (if {@link Fragment#onCreateView Fragment.onCreateView}
+     * also have its view (if {@link FRAGMENT#onCreateView FRAGMENT.onCreateView}
      * returns non-null) into a container view of the activity.
      *
      * @param containerViewId Optional identifier of the container this fragment is
@@ -52,15 +52,15 @@ public abstract class FragmentTransaction {
     public abstract FragmentTransaction add(int containerViewId, Fragment fragment, String tag);
 
     /**
-     * Calls {@link #replace(int, Fragment, String)} with a null tag.
+     * Calls {@link #replace(int, FRAGMENT, String)} with a null tag.
      */
     public abstract FragmentTransaction replace(int containerViewId, Fragment fragment);
 
     /**
      * Replace an existing fragment that was added to a container.  This is
-     * essentially the same as calling {@link #remove(Fragment)} for all
+     * essentially the same as calling {@link #remove(FRAGMENT)} for all
      * currently added fragments that were added with the same containerViewId
-     * and then {@link #add(int, Fragment, String)} with the same arguments
+     * and then {@link #add(int, FRAGMENT, String)} with the same arguments
      * given here.
      *
      * @param containerViewId Identifier of the container whose fragment(s) are
@@ -121,7 +121,7 @@ public abstract class FragmentTransaction {
 
     /**
      * Re-attach a fragment after it had previously been deatched from
-     * the UI with {@link #detach(Fragment)}.  This
+     * the UI with {@link #detach(FRAGMENT)}.  This
      * causes its view hierarchy to be re-created, attached to the UI,
      * and displayed.
      *
@@ -151,11 +151,11 @@ public abstract class FragmentTransaction {
     public static final int TRANSIT_UNSET = -1;
     /** No animation for transition. */
     public static final int TRANSIT_NONE = 0;
-    /** Fragment is being added onto the stack */
+    /** FRAGMENT is being added onto the stack */
     public static final int TRANSIT_FRAGMENT_OPEN = 1 | TRANSIT_ENTER_MASK;
-    /** Fragment is being removed from the stack */
+    /** FRAGMENT is being removed from the stack */
     public static final int TRANSIT_FRAGMENT_CLOSE = 2 | TRANSIT_EXIT_MASK;
-    /** Fragment should simply fade in or out; that is, no strong navigation associated
+    /** FRAGMENT should simply fade in or out; that is, no strong navigation associated
      * with it except that it is appearing or disappearing for some reason. */
     public static final int TRANSIT_FRAGMENT_FADE = 3 | TRANSIT_ENTER_MASK;
 

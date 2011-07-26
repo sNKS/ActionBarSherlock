@@ -39,7 +39,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
     }
 
     /**
-     * Return the Fragment associated with a specified position.
+     * Return the FRAGMENT associated with a specified position.
      */
     public abstract Fragment getItem(int position);
 

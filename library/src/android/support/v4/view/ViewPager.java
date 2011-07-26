@@ -399,8 +399,8 @@ public class ViewPager extends ViewGroup {
         mAdapter.startUpdate(this);
 
         final int startPos = mCurItem > 0 ? mCurItem - 1 : mCurItem;
-        final int N = mAdapter.getCount();
-        final int endPos = mCurItem < (N-1) ? mCurItem+1 : N-1;
+        final int n = mAdapter.getCount();
+        final int endPos = mCurItem < (n-1) ? mCurItem+1 : n-1;
 
         if (DEBUG) Log.v(TAG, "populating: startPos=" + startPos + " endPos=" + endPos);
 

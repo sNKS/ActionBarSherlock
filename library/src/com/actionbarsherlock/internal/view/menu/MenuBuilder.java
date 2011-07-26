@@ -62,7 +62,7 @@ public class MenuBuilder implements Menu {
         //android.R.layout.simple_list_item_1,
     };
 
-    private static final int[] sCategoryToOrder = new int[] {
+    private static final int[] CATEGORY_TO_ORDER = new int[] {
         1, /* No category */
         4, /* CONTAINER */
         5, /* SYSTEM */
@@ -311,10 +311,10 @@ public class MenuBuilder implements Menu {
 
     private static int getOrdering(int order) {
         int category = (0xFFFF0000 & order) >> 16;
-        if (category > sCategoryToOrder.length) {
+        if (category > CATEGORY_TO_ORDER.length) {
             throw new IllegalArgumentException("order does not contain a valid category");
         }
-        return (sCategoryToOrder[category] << 16) | (0xFFFF & order);
+        return (CATEGORY_TO_ORDER[category] << 16) | (0xFFFF & order);
     }
 
     private void onItemsChanged(boolean cleared) {
@@ -369,13 +369,13 @@ public class MenuBuilder implements Menu {
         PackageManager pm = mContext.getPackageManager();
         final List<ResolveInfo> lri =
                 pm.queryIntentActivityOptions(caller, specifics, intent, 0);
-        final int N = lri != null ? lri.size() : 0;
+        final int n = lri != null ? lri.size() : 0;
 
         if ((flags & FLAG_APPEND_TO_GROUP) == 0) {
             removeGroup(groupId);
         }
 
-        for (int i=0; i<N; i++) {
+        for (int i=0; i<n; i++) {
             final ResolveInfo ri = lri.get(i);
             Intent rintent = new Intent(
                 ri.specificIndex < 0 ? intent : specifics[ri.specificIndex]);
@@ -390,7 +390,7 @@ public class MenuBuilder implements Menu {
             }
         }
 
-        return N;
+        return n;
     }
 
     @Override
@@ -648,8 +648,8 @@ public class MenuBuilder implements Menu {
     void setExclusiveItemChecked(MenuItem item) {
         final int group = item.getGroupId();
 
-        final int N = mItems.size();
-        for (int i = 0; i < N; i++) {
+        final int n = mItems.size();
+        for (int i = 0; i < n; i++) {
             MenuItemImpl curItem = mItems.get(i);
             if (curItem.getGroupId() == group) {
                 if (!curItem.isExclusiveCheckable()) continue;
@@ -663,8 +663,8 @@ public class MenuBuilder implements Menu {
 
     @Override
     public void setGroupCheckable(int groupId, boolean checkable, boolean exclusive) {
-        final int N = mItems.size();
-        for (int i = 0; i < N; i++) {
+        final int n = mItems.size();
+        for (int i = 0; i < n; i++) {
             MenuItemImpl item = mItems.get(i);
             if (item.getGroupId() == groupId) {
                 item.setExclusiveCheckable(exclusive);

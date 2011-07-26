@@ -29,7 +29,7 @@ public class TimeUtils {
     private static final int SECONDS_PER_HOUR = 60 * 60;
     private static final int SECONDS_PER_DAY = 24 * 60 * 60;
 
-    private static final Object sFormatSync = new Object();
+    private static final Object FORMAT_SYNC = new Object();
     private static char[] sFormatStr = new char[HUNDRED_DAY_FIELD_LEN+5];
 
     static private int accumField(int amt, int suffix, boolean always, int zeropad) {
@@ -142,7 +142,7 @@ public class TimeUtils {
 
     /** @hide Just for debugging; not internationalized. */
     public static void formatDuration(long duration, StringBuilder builder) {
-        synchronized (sFormatSync) {
+        synchronized (FORMAT_SYNC) {
             int len = formatDurationLocked(duration, 0);
             builder.append(sFormatStr, 0, len);
         }
@@ -150,7 +150,7 @@ public class TimeUtils {
 
     /** @hide Just for debugging; not internationalized. */
     public static void formatDuration(long duration, PrintWriter pw, int fieldLen) {
-        synchronized (sFormatSync) {
+        synchronized (FORMAT_SYNC) {
             int len = formatDurationLocked(duration, fieldLen);
             pw.print(new String(sFormatStr, 0, len));
         }

@@ -146,7 +146,7 @@ final class FragmentState implements Parcelable {
  * documentation for a class overview.
  */
 public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener {
-    private static final HashMap<String, Class<?>> sClassMap =
+    private static final HashMap<String, Class<?>> CLASS_MAP =
             new HashMap<String, Class<?>>();
 
     static final int INITIALIZING = 0;     // Not yet created.
@@ -273,7 +273,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
 
     /**
      * State information that has been retrieved from a fragment instance
-     * through {@link FragmentManager#saveFragmentInstanceState(Fragment)
+     * through {@link FragmentManager#saveFragmentInstanceState(FRAGMENT)
      * FragmentManager.saveFragmentInstanceState}.
      */
     public static class SavedState implements Parcelable {
@@ -313,7 +313,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     }
 
     /**
-     * Thrown by {@link Fragment#instantiate(Context, String, Bundle)} when
+     * Thrown by {@link FRAGMENT#instantiate(Context, String, Bundle)} when
      * there is an instantiation failure.
      */
     static public class InstantiationException extends RuntimeException {
@@ -331,7 +331,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      * have other constructors with parameters, since these constructors
      * will not be called when the fragment is re-instantiated; instead,
      * arguments can be supplied by the caller with {@link #setArguments}
-     * and later retrieved by the Fragment with {@link #getArguments}.
+     * and later retrieved by the FRAGMENT with {@link #getArguments}.
      *
      * <p>Applications should generally not implement a constructor.  The
      * first place application code an run where the fragment is ready to
@@ -353,7 +353,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     }
 
     /**
-     * Create a new instance of a Fragment with the given class name.  This is
+     * Create a new instance of a FRAGMENT with the given class name.  This is
      * the same as calling its empty constructor.
      *
      * @param context The calling context being used to instantiate the fragment.
@@ -368,11 +368,11 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      */
     public static Fragment instantiate(Context context, String fname, Bundle args) {
         try {
-            Class<?> clazz = sClassMap.get(fname);
+            Class<?> clazz = CLASS_MAP.get(fname);
             if (clazz == null) {
                 // Class not found in the cache, see if it's real, and try to add it
                 clazz = context.getClassLoader().loadClass(fname);
-                sClassMap.put(fname, clazz);
+                CLASS_MAP.put(fname, clazz);
             }
             Fragment f = (Fragment)clazz.newInstance();
             if (args != null) {
@@ -470,7 +470,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      */
     public void setArguments(Bundle args) {
         if (mIndex >= 0) {
-            throw new IllegalStateException("Fragment already active");
+            throw new IllegalStateException("FRAGMENT already active");
         }
         mArguments = args;
     }
@@ -484,16 +484,16 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     }
 
     /**
-     * Set the initial saved state that this Fragment should restore itself
+     * Set the initial saved state that this FRAGMENT should restore itself
      * from when first being constructed, as returned by
-     * {@link FragmentManager#saveFragmentInstanceState(Fragment)
+     * {@link FragmentManager#saveFragmentInstanceState(FRAGMENT)
      * FragmentManager.saveFragmentInstanceState}.
      *
      * @param state The state the fragment should be restored from.
      */
     public void setInitialSavedState(SavedState state) {
         if (mIndex >= 0) {
-            throw new IllegalStateException("Fragment already active");
+            throw new IllegalStateException("FRAGMENT already active");
         }
         mSavedFragmentState = state != null && state.mState != null
                 ? state.mState : null;
@@ -541,7 +541,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      */
     final public Resources getResources() {
         if (mActivity == null) {
-            throw new IllegalStateException("Fragment " + this + " not attached to Activity");
+            throw new IllegalStateException("FRAGMENT " + this + " not attached to Activity");
         }
         return mActivity.getResources();
     }
@@ -607,8 +607,8 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
 
     /**
      * Return true if the fragment has been explicitly detached from the UI.
-     * That is, {@link FragmentTransaction#detach(Fragment)
-     * FragmentTransaction.detach(Fragment)} has been used on it.
+     * That is, {@link FragmentTransaction#detach(FRAGMENT)
+     * FragmentTransaction.detach(FRAGMENT)} has been used on it.
      */
     final public boolean isDetached() {
         return mDetached;
@@ -719,7 +719,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
             return mLoaderManager;
         }
         if (mActivity == null) {
-            throw new IllegalStateException("Fragment " + this + " not attached to Activity");
+            throw new IllegalStateException("FRAGMENT " + this + " not attached to Activity");
         }
         mCheckedForLoaderManager = true;
         mLoaderManager = mActivity.getLoaderManager(mIndex, mLoadersStarted, true);
@@ -732,7 +732,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      */
     public void startActivity(Intent intent) {
         if (mActivity == null) {
-            throw new IllegalStateException("Fragment " + this + " not attached to Activity");
+            throw new IllegalStateException("FRAGMENT " + this + " not attached to Activity");
         }
         mActivity.startActivityFromFragment(this, intent, -1);
     }
@@ -743,7 +743,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      */
     public void startActivityForResult(Intent intent, int requestCode) {
         if (mActivity == null) {
-            throw new IllegalStateException("Fragment " + this + " not attached to Activity");
+            throw new IllegalStateException("FRAGMENT " + this + " not attached to Activity");
         }
         mActivity.startActivityFromFragment(this, intent, requestCode);
     }
@@ -918,7 +918,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     }
 
     /**
-     * Called when the Fragment is visible to the user.  This is generally
+     * Called when the FRAGMENT is visible to the user.  This is generally
      * tied to {@link Activity#onStart() Activity.onStart} of the containing
      * Activity's lifecycle.
      */
@@ -974,7 +974,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     }
 
     /**
-     * Called when the Fragment is no longer resumed.  This is generally
+     * Called when the FRAGMENT is no longer resumed.  This is generally
      * tied to {@link Activity#onPause() Activity.onPause} of the containing
      * Activity's lifecycle.
      */
@@ -983,7 +983,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     }
 
     /**
-     * Called when the Fragment is no longer started.  This is generally
+     * Called when the FRAGMENT is no longer started.  This is generally
      * tied to {@link Activity#onStop() Activity.onStop} of the containing
      * Activity's lifecycle.
      */

@@ -632,7 +632,7 @@ public final class ActionBarView extends RelativeLayout {
     }
 
     private static class TabImpl implements ActionBar.Tab {
-        private static final View.OnClickListener clickListener = new View.OnClickListener() {
+        private static final View.OnClickListener CLICK_LISTENER = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((TabImpl)v.getTag()).select();
@@ -653,7 +653,7 @@ public final class ActionBarView extends RelativeLayout {
             mActionBar = actionBar;
             mView = LayoutInflater.from(mActionBar.getContext()).inflate(R.layout.action_bar_tab_layout, actionBar.mTabsView, false);
             mView.setTag(this);
-            mView.setOnClickListener(clickListener);
+            mView.setOnClickListener(CLICK_LISTENER);
 
             mIconView = (ImageView)mView.findViewById(R.id.actionbarwatson_tab_icon);
             mTextView = (TextView)mView.findViewById(R.id.actionbarwatson_tab);

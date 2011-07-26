@@ -269,40 +269,40 @@ public abstract class FragmentManager {
      *
      * @param bundle The bundle in which to put the fragment reference.
      * @param key The name of the entry in the bundle.
-     * @param fragment The Fragment whose reference is to be stored.
+     * @param fragment The FRAGMENT whose reference is to be stored.
      */
     public abstract void putFragment(Bundle bundle, String key, Fragment fragment);
 
     /**
-     * Retrieve the current Fragment instance for a reference previously
-     * placed with {@link #putFragment(Bundle, String, Fragment)}.
+     * Retrieve the current FRAGMENT instance for a reference previously
+     * placed with {@link #putFragment(Bundle, String, FRAGMENT)}.
      *
      * @param bundle The bundle from which to retrieve the fragment reference.
      * @param key The name of the entry in the bundle.
-     * @return Returns the current Fragment instance that is associated with
+     * @return Returns the current FRAGMENT instance that is associated with
      * the given reference.
      */
     public abstract Fragment getFragment(Bundle bundle, String key);
 
     /**
-     * Save the current instance state of the given Fragment.  This can be
-     * used later when creating a new instance of the Fragment and adding
+     * Save the current instance state of the given FRAGMENT.  This can be
+     * used later when creating a new instance of the FRAGMENT and adding
      * it to the fragment manager, to have it create itself to match the
      * current state returned here.  Note that there are limits on how
      * this can be used:
      *
      * <ul>
-     * <li>The Fragment must currently be attached to the FragmentManager.
-     * <li>A new Fragment created using this saved state must be the same class
-     * type as the Fragment it was created from.
+     * <li>The FRAGMENT must currently be attached to the FragmentManager.
+     * <li>A new FRAGMENT created using this saved state must be the same class
+     * type as the FRAGMENT it was created from.
      * <li>The saved state can not contain dependencies on other fragments --
-     * that is it can't use {@link #putFragment(Bundle, String, Fragment)} to
+     * that is it can't use {@link #putFragment(Bundle, String, FRAGMENT)} to
      * store a fragment reference because that reference may not be valid when
-     * this saved state is later used.  Likewise the Fragment's target and
+     * this saved state is later used.  Likewise the FRAGMENT's target and
      * result code are not included in this state.
      * </ul>
      *
-     * @param f The Fragment whose state is to be saved.
+     * @param f The FRAGMENT whose state is to be saved.
      * @return The generated state.  This will be null if there was no
      * interesting state created by the fragment.
      */
@@ -324,7 +324,7 @@ public abstract class FragmentManager {
      * the framework performs fragment operations.
      */
     public static void enableDebugLogging(boolean enabled) {
-        FragmentManagerImpl.DEBUG = enabled;
+        FragmentManagerImpl.debug = enabled;
     }
 }
 
@@ -368,7 +368,7 @@ final class FragmentManagerState implements Parcelable {
  * Container for fragments associated with an activity.
  */
 final class FragmentManagerImpl extends FragmentManager {
-    static boolean DEBUG = false;
+    static boolean debug = false;
     static final String TAG = "FragmentManager";
 
     static final boolean HONEYCOMB = android.os.Build.VERSION.SDK_INT >= 11;
@@ -504,7 +504,7 @@ final class FragmentManagerImpl extends FragmentManager {
     @Override
     public void putFragment(Bundle bundle, String key, Fragment fragment) {
         if (fragment.mIndex < 0) {
-            throw new IllegalStateException("Fragment " + fragment
+            throw new IllegalStateException("FRAGMENT " + fragment
                     + " is not currently in the FragmentManager");
         }
         bundle.putInt(key, fragment.mIndex);
@@ -531,7 +531,7 @@ final class FragmentManagerImpl extends FragmentManager {
     @Override
     public Fragment.SavedState saveFragmentInstanceState(Fragment fragment) {
         if (fragment.mIndex < 0) {
-            throw new IllegalStateException("Fragment " + fragment
+            throw new IllegalStateException("FRAGMENT " + fragment
                     + " is not currently in the FragmentManager");
         }
         if (fragment.mState > Fragment.INITIALIZING) {
@@ -556,14 +556,14 @@ final class FragmentManagerImpl extends FragmentManager {
     public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
         String innerPrefix = prefix + "    ";
 
-        int N;
+        int n;
         if (mActive != null) {
-            N = mActive.size();
-            if (N > 0) {
+            n = mActive.size();
+            if (n > 0) {
                 writer.print(prefix); writer.print("Active Fragments in ");
                         writer.print(Integer.toHexString(System.identityHashCode(this)));
                         writer.println(":");
-                for (int i=0; i<N; i++) {
+                for (int i=0; i<n; i++) {
                     Fragment f = mActive.get(i);
                     writer.print(prefix); writer.print("  #"); writer.print(i);
                             writer.print(": "); writer.println(f);
@@ -575,10 +575,10 @@ final class FragmentManagerImpl extends FragmentManager {
         }
 
         if (mAdded != null) {
-            N = mAdded.size();
-            if (N > 0) {
+            n = mAdded.size();
+            if (n > 0) {
                 writer.print(prefix); writer.println("Added Fragments:");
-                for (int i=0; i<N; i++) {
+                for (int i=0; i<n; i++) {
                     Fragment f = mAdded.get(i);
                     writer.print(prefix); writer.print("  #"); writer.print(i);
                             writer.print(": "); writer.println(f.toString());
@@ -587,10 +587,10 @@ final class FragmentManagerImpl extends FragmentManager {
         }
 
         if (mCreatedMenus != null) {
-            N = mCreatedMenus.size();
-            if (N > 0) {
+            n = mCreatedMenus.size();
+            if (n > 0) {
                 writer.print(prefix); writer.println("Fragments Created Menus:");
-                for (int i=0; i<N; i++) {
+                for (int i=0; i<n; i++) {
                     Fragment f = mCreatedMenus.get(i);
                     writer.print(prefix); writer.print("  #"); writer.print(i);
                             writer.print(": "); writer.println(f.toString());
@@ -599,10 +599,10 @@ final class FragmentManagerImpl extends FragmentManager {
         }
 
         if (mBackStack != null) {
-            N = mBackStack.size();
-            if (N > 0) {
+            n = mBackStack.size();
+            if (n > 0) {
                 writer.print(prefix); writer.println("Back Stack:");
-                for (int i=0; i<N; i++) {
+                for (int i=0; i<n; i++) {
                     BackStackRecord bs = mBackStack.get(i);
                     writer.print(prefix); writer.print("  #"); writer.print(i);
                             writer.print(": "); writer.println(bs.toString());
@@ -613,10 +613,10 @@ final class FragmentManagerImpl extends FragmentManager {
 
         synchronized (this) {
             if (mBackStackIndices != null) {
-                N = mBackStackIndices.size();
-                if (N > 0) {
+                n = mBackStackIndices.size();
+                if (n > 0) {
                     writer.print(prefix); writer.println("Back Stack Indices:");
-                    for (int i=0; i<N; i++) {
+                    for (int i=0; i<n; i++) {
                         BackStackRecord bs = mBackStackIndices.get(i);
                         writer.print(prefix); writer.print("  #"); writer.print(i);
                                 writer.print(": "); writer.println(bs);
@@ -631,10 +631,10 @@ final class FragmentManagerImpl extends FragmentManager {
         }
 
         if (mPendingActions != null) {
-            N = mPendingActions.size();
-            if (N > 0) {
+            n = mPendingActions.size();
+            if (n > 0) {
                 writer.print(prefix); writer.println("Pending Actions:");
-                for (int i=0; i<N; i++) {
+                for (int i=0; i<n; i++) {
                     Runnable r = mPendingActions.get(i);
                     writer.print(prefix); writer.print("  #"); writer.print(i);
                             writer.print(": "); writer.println(r);
@@ -775,7 +775,7 @@ final class FragmentManagerImpl extends FragmentManager {
             }
             switch (f.mState) {
                 case Fragment.INITIALIZING:
-                    if (DEBUG) Log.v(TAG, "moveto CREATED: " + f);
+                    if (debug) Log.v(TAG, "moveto CREATED: " + f);
                     if (f.mSavedFragmentState != null) {
                         f.mSavedViewState = f.mSavedFragmentState.getSparseParcelableArray(
                                 FragmentManagerImpl.VIEW_STATE_TAG);
@@ -791,7 +791,7 @@ final class FragmentManagerImpl extends FragmentManager {
                     f.mCalled = false;
                     f.onAttach(mActivity);
                     if (!f.mCalled) {
-                        throw new SuperNotCalledException("Fragment " + f
+                        throw new SuperNotCalledException("FRAGMENT " + f
                                 + " did not call through to super.onAttach()");
                     }
                     mActivity.onAttachFragment(f);
@@ -800,7 +800,7 @@ final class FragmentManagerImpl extends FragmentManager {
                         f.mCalled = false;
                         f.onCreate(f.mSavedFragmentState);
                         if (!f.mCalled) {
-                            throw new SuperNotCalledException("Fragment " + f
+                            throw new SuperNotCalledException("FRAGMENT " + f
                                     + " did not call through to super.onCreate()");
                         }
                     }
@@ -822,7 +822,7 @@ final class FragmentManagerImpl extends FragmentManager {
                     }
                 case Fragment.CREATED:
                     if (newState > Fragment.CREATED) {
-                        if (DEBUG) Log.v(TAG, "moveto ACTIVITY_CREATED: " + f);
+                        if (debug) Log.v(TAG, "moveto ACTIVITY_CREATED: " + f);
                         if (!f.mFromLayout) {
                             ViewGroup container = null;
                             if (f.mContainerId != 0) {
@@ -857,7 +857,7 @@ final class FragmentManagerImpl extends FragmentManager {
                         f.mCalled = false;
                         f.onActivityCreated(f.mSavedFragmentState);
                         if (!f.mCalled) {
-                            throw new SuperNotCalledException("Fragment " + f
+                            throw new SuperNotCalledException("FRAGMENT " + f
                                     + " did not call through to super.onActivityCreated()");
                         }
                         if (f.mView != null) {
@@ -868,22 +868,22 @@ final class FragmentManagerImpl extends FragmentManager {
                 case Fragment.ACTIVITY_CREATED:
                 case Fragment.STOPPED:
                     if (newState > Fragment.STOPPED) {
-                        if (DEBUG) Log.v(TAG, "moveto STARTED: " + f);
+                        if (debug) Log.v(TAG, "moveto STARTED: " + f);
                         f.mCalled = false;
                         f.performStart();
                         if (!f.mCalled) {
-                            throw new SuperNotCalledException("Fragment " + f
+                            throw new SuperNotCalledException("FRAGMENT " + f
                                     + " did not call through to super.onStart()");
                         }
                     }
                 case Fragment.STARTED:
                     if (newState > Fragment.STARTED) {
-                        if (DEBUG) Log.v(TAG, "moveto RESUMED: " + f);
+                        if (debug) Log.v(TAG, "moveto RESUMED: " + f);
                         f.mCalled = false;
                         f.mResumed = true;
                         f.onResume();
                         if (!f.mCalled) {
-                            throw new SuperNotCalledException("Fragment " + f
+                            throw new SuperNotCalledException("FRAGMENT " + f
                                     + " did not call through to super.onResume()");
                         }
                     }
@@ -892,29 +892,29 @@ final class FragmentManagerImpl extends FragmentManager {
             switch (f.mState) {
                 case Fragment.RESUMED:
                     if (newState < Fragment.RESUMED) {
-                        if (DEBUG) Log.v(TAG, "movefrom RESUMED: " + f);
+                        if (debug) Log.v(TAG, "movefrom RESUMED: " + f);
                         f.mCalled = false;
                         f.onPause();
                         if (!f.mCalled) {
-                            throw new SuperNotCalledException("Fragment " + f
+                            throw new SuperNotCalledException("FRAGMENT " + f
                                     + " did not call through to super.onPause()");
                         }
                         f.mResumed = false;
                     }
                 case Fragment.STARTED:
                     if (newState < Fragment.STARTED) {
-                        if (DEBUG) Log.v(TAG, "movefrom STARTED: " + f);
+                        if (debug) Log.v(TAG, "movefrom STARTED: " + f);
                         f.mCalled = false;
                         f.performStop();
                         if (!f.mCalled) {
-                            throw new SuperNotCalledException("Fragment " + f
+                            throw new SuperNotCalledException("FRAGMENT " + f
                                     + " did not call through to super.onStop()");
                         }
                     }
                 case Fragment.STOPPED:
                 case Fragment.ACTIVITY_CREATED:
                     if (newState < Fragment.ACTIVITY_CREATED) {
-                        if (DEBUG) Log.v(TAG, "movefrom ACTIVITY_CREATED: " + f);
+                        if (debug) Log.v(TAG, "movefrom ACTIVITY_CREATED: " + f);
                         if (f.mView != null) {
                             // Need to save the current view state if not
                             // done already.
@@ -925,7 +925,7 @@ final class FragmentManagerImpl extends FragmentManager {
                         f.mCalled = false;
                         f.performDestroyView();
                         if (!f.mCalled) {
-                            throw new SuperNotCalledException("Fragment " + f
+                            throw new SuperNotCalledException("FRAGMENT " + f
                                     + " did not call through to super.onDestroyView()");
                         }
                         if (f.mView != null && f.mContainer != null) {
@@ -985,12 +985,12 @@ final class FragmentManagerImpl extends FragmentManager {
                             f.mStateAfterAnimating = newState;
                             newState = Fragment.CREATED;
                         } else {
-                            if (DEBUG) Log.v(TAG, "movefrom CREATED: " + f);
+                            if (debug) Log.v(TAG, "movefrom CREATED: " + f);
                             if (!f.mRetaining) {
                                 f.mCalled = false;
                                 f.onDestroy();
                                 if (!f.mCalled) {
-                                    throw new SuperNotCalledException("Fragment " + f
+                                    throw new SuperNotCalledException("FRAGMENT " + f
                                             + " did not call through to super.onDestroy()");
                                 }
                             }
@@ -998,7 +998,7 @@ final class FragmentManagerImpl extends FragmentManager {
                             f.mCalled = false;
                             f.onDetach();
                             if (!f.mCalled) {
-                                throw new SuperNotCalledException("Fragment " + f
+                                throw new SuperNotCalledException("FRAGMENT " + f
                                         + " did not call through to super.onDetach()");
                             }
                             if (!f.mRetaining) {
@@ -1072,7 +1072,7 @@ final class FragmentManagerImpl extends FragmentManager {
             return;
         }
 
-        if (DEBUG) Log.v(TAG, "Freeing fragment index " + f.mIndex);
+        if (debug) Log.v(TAG, "Freeing fragment index " + f.mIndex);
         mActive.set(f.mIndex, null);
         if (mAvailIndices == null) {
             mAvailIndices = new ArrayList<Integer>();
@@ -1086,7 +1086,7 @@ final class FragmentManagerImpl extends FragmentManager {
         if (mAdded == null) {
             mAdded = new ArrayList<Fragment>();
         }
-        if (DEBUG) Log.v(TAG, "add: " + fragment);
+        if (debug) Log.v(TAG, "add: " + fragment);
         makeActive(fragment);
         if (!fragment.mDetached) {
             mAdded.add(fragment);
@@ -1102,7 +1102,7 @@ final class FragmentManagerImpl extends FragmentManager {
     }
 
     public void removeFragment(Fragment fragment, int transition, int transitionStyle) {
-        if (DEBUG) Log.v(TAG, "remove: " + fragment + " nesting=" + fragment.mBackStackNesting);
+        if (debug) Log.v(TAG, "remove: " + fragment + " nesting=" + fragment.mBackStackNesting);
         final boolean inactive = !fragment.isInBackStack();
         if (!fragment.mDetached || inactive) {
             mAdded.remove(fragment);
@@ -1117,7 +1117,7 @@ final class FragmentManagerImpl extends FragmentManager {
     }
 
     public void hideFragment(Fragment fragment, int transition, int transitionStyle) {
-        if (DEBUG) Log.v(TAG, "hide: " + fragment);
+        if (debug) Log.v(TAG, "hide: " + fragment);
         if (!fragment.mHidden) {
             fragment.mHidden = true;
             if (fragment.mView != null) {
@@ -1136,7 +1136,7 @@ final class FragmentManagerImpl extends FragmentManager {
     }
 
     public void showFragment(Fragment fragment, int transition, int transitionStyle) {
-        if (DEBUG) Log.v(TAG, "show: " + fragment);
+        if (debug) Log.v(TAG, "show: " + fragment);
         if (fragment.mHidden) {
             fragment.mHidden = false;
             if (fragment.mView != null) {
@@ -1155,7 +1155,7 @@ final class FragmentManagerImpl extends FragmentManager {
     }
 
     public void detachFragment(Fragment fragment, int transition, int transitionStyle) {
-        if (DEBUG) Log.v(TAG, "detach: " + fragment);
+        if (debug) Log.v(TAG, "detach: " + fragment);
         if (!fragment.mDetached) {
             fragment.mDetached = true;
             if (fragment.mAdded) {
@@ -1171,7 +1171,7 @@ final class FragmentManagerImpl extends FragmentManager {
     }
 
     public void attachFragment(Fragment fragment, int transition, int transitionStyle) {
-        if (DEBUG) Log.v(TAG, "attach: " + fragment);
+        if (debug) Log.v(TAG, "attach: " + fragment);
         if (fragment.mDetached) {
             fragment.mDetached = false;
             if (!fragment.mAdded) {
@@ -1275,13 +1275,13 @@ final class FragmentManagerImpl extends FragmentManager {
                     mBackStackIndices = new ArrayList<BackStackRecord>();
                 }
                 int index = mBackStackIndices.size();
-                if (DEBUG) Log.v(TAG, "Setting back stack index " + index + " to " + bse);
+                if (debug) Log.v(TAG, "Setting back stack index " + index + " to " + bse);
                 mBackStackIndices.add(bse);
                 return index;
 
             } else {
                 int index = mAvailBackStackIndices.remove(mAvailBackStackIndices.size()-1);
-                if (DEBUG) Log.v(TAG, "Adding back stack index " + index + " with " + bse);
+                if (debug) Log.v(TAG, "Adding back stack index " + index + " with " + bse);
                 mBackStackIndices.set(index, bse);
                 return index;
             }
@@ -1293,21 +1293,21 @@ final class FragmentManagerImpl extends FragmentManager {
             if (mBackStackIndices == null) {
                 mBackStackIndices = new ArrayList<BackStackRecord>();
             }
-            int N = mBackStackIndices.size();
-            if (index < N) {
-                if (DEBUG) Log.v(TAG, "Setting back stack index " + index + " to " + bse);
+            int n = mBackStackIndices.size();
+            if (index < n) {
+                if (debug) Log.v(TAG, "Setting back stack index " + index + " to " + bse);
                 mBackStackIndices.set(index, bse);
             } else {
-                while (N < index) {
+                while (n < index) {
                     mBackStackIndices.add(null);
                     if (mAvailBackStackIndices == null) {
                         mAvailBackStackIndices = new ArrayList<Integer>();
                     }
-                    if (DEBUG) Log.v(TAG, "Adding available back stack index " + N);
-                    mAvailBackStackIndices.add(N);
-                    N++;
+                    if (debug) Log.v(TAG, "Adding available back stack index " + n);
+                    mAvailBackStackIndices.add(n);
+                    n++;
                 }
-                if (DEBUG) Log.v(TAG, "Adding back stack index " + index + " with " + bse);
+                if (debug) Log.v(TAG, "Adding back stack index " + index + " with " + bse);
                 mBackStackIndices.add(bse);
             }
         }
@@ -1319,7 +1319,7 @@ final class FragmentManagerImpl extends FragmentManager {
             if (mAvailBackStackIndices == null) {
                 mAvailBackStackIndices = new ArrayList<Integer>();
             }
-            if (DEBUG) Log.v(TAG, "Freeing back stack index " + index);
+            if (debug) Log.v(TAG, "Freeing back stack index " + index);
             mAvailBackStackIndices.add(index);
         }
     }
@@ -1433,10 +1433,10 @@ final class FragmentManagerImpl extends FragmentManager {
             for (int i=mBackStack.size()-1; i>index; i--) {
                 states.add(mBackStack.remove(i));
             }
-            final int LAST = states.size()-1;
-            for (int i=0; i<=LAST; i++) {
-                if (DEBUG) Log.v(TAG, "Popping back stack state: " + states.get(i));
-                states.get(i).popFromBackStack(i == LAST);
+            final int last = states.size()-1;
+            for (int i=0; i<=last; i++) {
+                if (debug) Log.v(TAG, "Popping back stack state: " + states.get(i));
+                states.get(i).popFromBackStack(i == last);
             }
             reportBackStackChanged();
         }
@@ -1526,10 +1526,10 @@ final class FragmentManagerImpl extends FragmentManager {
         }
 
         // First collect all active fragments.
-        int N = mActive.size();
-        FragmentState[] active = new FragmentState[N];
+        int n = mActive.size();
+        FragmentState[] active = new FragmentState[n];
         boolean haveFragments = false;
-        for (int i=0; i<N; i++) {
+        for (int i=0; i<n; i++) {
             Fragment f = mActive.get(i);
             if (f != null) {
                 haveFragments = true;
@@ -1564,13 +1564,13 @@ final class FragmentManagerImpl extends FragmentManager {
                     fs.mSavedFragmentState = f.mSavedFragmentState;
                 }
 
-                if (DEBUG) Log.v(TAG, "Saved state of " + f + ": "
+                if (debug) Log.v(TAG, "Saved state of " + f + ": "
                         + fs.mSavedFragmentState);
             }
         }
 
         if (!haveFragments) {
-            if (DEBUG) Log.v(TAG, "saveAllState: no fragments!");
+            if (debug) Log.v(TAG, "saveAllState: no fragments!");
             return null;
         }
 
@@ -1579,12 +1579,12 @@ final class FragmentManagerImpl extends FragmentManager {
 
         // Build list of currently added fragments.
         if (mAdded != null) {
-            N = mAdded.size();
-            if (N > 0) {
-                added = new int[N];
-                for (int i=0; i<N; i++) {
+            n = mAdded.size();
+            if (n > 0) {
+                added = new int[n];
+                for (int i=0; i<n; i++) {
                     added[i] = mAdded.get(i).mIndex;
-                    if (DEBUG) Log.v(TAG, "saveAllState: adding fragment #" + i
+                    if (debug) Log.v(TAG, "saveAllState: adding fragment #" + i
                             + ": " + mAdded.get(i));
                 }
             }
@@ -1592,12 +1592,12 @@ final class FragmentManagerImpl extends FragmentManager {
 
         // Now save back stack.
         if (mBackStack != null) {
-            N = mBackStack.size();
-            if (N > 0) {
-                backStack = new BackStackState[N];
-                for (int i=0; i<N; i++) {
+            n = mBackStack.size();
+            if (n > 0) {
+                backStack = new BackStackState[n];
+                for (int i=0; i<n; i++) {
                     backStack[i] = new BackStackState(this, mBackStack.get(i));
-                    if (DEBUG) Log.v(TAG, "saveAllState: adding back stack #" + i
+                    if (debug) Log.v(TAG, "saveAllState: adding back stack #" + i
                             + ": " + mBackStack.get(i));
                 }
             }
@@ -1622,7 +1622,7 @@ final class FragmentManagerImpl extends FragmentManager {
         if (nonConfig != null) {
             for (int i=0; i<nonConfig.size(); i++) {
                 Fragment f = nonConfig.get(i);
-                if (DEBUG) Log.v(TAG, "restoreAllState: re-attaching retained " + f);
+                if (debug) Log.v(TAG, "restoreAllState: re-attaching retained " + f);
                 FragmentState fs = fms.mActive[f.mIndex];
                 fs.mInstance = f;
                 f.mSavedViewState = null;
@@ -1648,19 +1648,19 @@ final class FragmentManagerImpl extends FragmentManager {
             FragmentState fs = fms.mActive[i];
             if (fs != null) {
                 Fragment f = fs.instantiate(mActivity);
-                if (DEBUG) Log.v(TAG, "restoreAllState: adding #" + i + ": " + f);
+                if (debug) Log.v(TAG, "restoreAllState: adding #" + i + ": " + f);
                 mActive.add(f);
                 // Now that the fragment is instantiated (or came from being
                 // retained above), clear mInstance in case we end up re-restoring
                 // from this FragmentState again.
                 fs.mInstance = null;
             } else {
-                if (DEBUG) Log.v(TAG, "restoreAllState: adding #" + i + ": (null)");
+                if (debug) Log.v(TAG, "restoreAllState: adding #" + i + ": (null)");
                 mActive.add(null);
                 if (mAvailIndices == null) {
                     mAvailIndices = new ArrayList<Integer>();
                 }
-                if (DEBUG) Log.v(TAG, "restoreAllState: adding avail #" + i);
+                if (debug) Log.v(TAG, "restoreAllState: adding avail #" + i);
                 mAvailIndices.add(i);
             }
         }
@@ -1692,7 +1692,7 @@ final class FragmentManagerImpl extends FragmentManager {
                 }
                 f.mAdded = true;
                 f.mImmediateActivity = mActivity;
-                if (DEBUG) Log.v(TAG, "restoreAllState: making added #" + i + ": " + f);
+                if (debug) Log.v(TAG, "restoreAllState: making added #" + i + ": " + f);
                 mAdded.add(f);
             }
         } else {
@@ -1704,7 +1704,7 @@ final class FragmentManagerImpl extends FragmentManager {
             mBackStack = new ArrayList<BackStackRecord>(fms.mBackStack.length);
             for (int i=0; i<fms.mBackStack.length; i++) {
                 BackStackRecord bse = fms.mBackStack[i].instantiate(this);
-                if (DEBUG) Log.v(TAG, "restoreAllState: adding bse #" + i
+                if (debug) Log.v(TAG, "restoreAllState: adding bse #" + i
                         + " (index " + bse.mIndex + "): " + bse);
                 mBackStack.add(bse);
                 if (bse.mIndex >= 0) {

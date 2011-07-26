@@ -172,13 +172,13 @@ public abstract class LoaderManager {
      * the framework performs loader operations.
      */
     public static void enableDebugLogging(boolean enabled) {
-        LoaderManagerImpl.DEBUG = enabled;
+        LoaderManagerImpl.debug = enabled;
     }
 }
 
 class LoaderManagerImpl extends LoaderManager {
     static final String TAG = "LoaderManager";
-    static boolean DEBUG = false;
+    static boolean debug = false;
 
     // These are the currently active loaders.  A loader is here
     // from the time its load is started until it has been explicitly
@@ -237,7 +237,7 @@ class LoaderManagerImpl extends LoaderManager {
 
             mStarted = true;
 
-            if (DEBUG) Log.v(TAG, "  Starting: " + this);
+            if (debug) Log.v(TAG, "  Starting: " + this);
             if (mLoader == null && mCallbacks != null) {
                mLoader = mCallbacks.onCreateLoader(mId, mArgs);
             }
@@ -257,7 +257,7 @@ class LoaderManagerImpl extends LoaderManager {
         }
 
         void retain() {
-            if (DEBUG) Log.v(TAG, "  Retaining: " + this);
+            if (debug) Log.v(TAG, "  Retaining: " + this);
             mRetaining = true;
             mRetainingStarted = mStarted;
             mStarted = false;
@@ -266,7 +266,7 @@ class LoaderManagerImpl extends LoaderManager {
 
         void finishRetain() {
             if (mRetaining) {
-                if (DEBUG) Log.v(TAG, "  Finished Retaining: " + this);
+                if (debug) Log.v(TAG, "  Finished Retaining: " + this);
                 mRetaining = false;
                 if (mStarted != mRetainingStarted) {
                     if (!mStarted) {
@@ -301,7 +301,7 @@ class LoaderManagerImpl extends LoaderManager {
         }
 
         void stop() {
-            if (DEBUG) Log.v(TAG, "  Stopping: " + this);
+            if (debug) Log.v(TAG, "  Stopping: " + this);
             mStarted = false;
             if (!mRetaining) {
                 if (mLoader != null && mListenerRegistered) {
@@ -314,12 +314,12 @@ class LoaderManagerImpl extends LoaderManager {
         }
 
         void destroy() {
-            if (DEBUG) Log.v(TAG, "  Destroying: " + this);
+            if (debug) Log.v(TAG, "  Destroying: " + this);
             mDestroyed = true;
             boolean needReset = mDeliveredData;
             mDeliveredData = false;
             if (mCallbacks != null && mLoader != null && mHaveData && needReset) {
-                if (DEBUG) Log.v(TAG, "  Reseting: " + this);
+                if (debug) Log.v(TAG, "  Reseting: " + this);
                 String lastBecause = null;
                 if (mActivity != null) {
                     lastBecause = mActivity.mFragments.mNoTransactionsBecause;
@@ -349,17 +349,17 @@ class LoaderManagerImpl extends LoaderManager {
         }
 
         @Override public void onLoadComplete(Loader<Object> loader, Object data) {
-            if (DEBUG) Log.v(TAG, "onLoadComplete: " + this);
+            if (debug) Log.v(TAG, "onLoadComplete: " + this);
 
             if (mDestroyed) {
-                if (DEBUG) Log.v(TAG, "  Ignoring load complete -- destroyed");
+                if (debug) Log.v(TAG, "  Ignoring load complete -- destroyed");
                 return;
             }
 
             if (mLoaders.get(mId) != this) {
                 // This data is not coming from the current active loader.
                 // We don't care about it.
-                if (DEBUG) Log.v(TAG, "  Ignoring load complete -- not active");
+                if (debug) Log.v(TAG, "  Ignoring load complete -- not active");
                 return;
             }
 
@@ -368,7 +368,7 @@ class LoaderManagerImpl extends LoaderManager {
                 // There is a new request pending and we were just
                 // waiting for the old one to complete before starting
                 // it.  So now it is time, switch over to the new loader.
-                if (DEBUG) Log.v(TAG, "  Switching to pending loader: " + pending);
+                if (debug) Log.v(TAG, "  Switching to pending loader: " + pending);
                 mPendingLoader = null;
                 mLoaders.put(mId, null);
                 destroy();
@@ -386,7 +386,7 @@ class LoaderManagerImpl extends LoaderManager {
                 }
             }
 
-            //if (DEBUG) Log.v(TAG, "  onLoadFinished returned: " + this);
+            //if (debug) Log.v(TAG, "  onLoadFinished returned: " + this);
 
             // We have now given the application the new loader with its
             // loaded data, so it should have stopped using the previous
@@ -408,7 +408,7 @@ class LoaderManagerImpl extends LoaderManager {
                     mActivity.mFragments.mNoTransactionsBecause = "onLoadFinished";
                 }
                 try {
-                    if (DEBUG) Log.v(TAG, "  onLoadFinished in " + loader + ": "
+                    if (debug) Log.v(TAG, "  onLoadFinished in " + loader + ": "
                             + loader.dataToString(data));
                     mCallbacks.onLoadFinished(loader, data);
                 } finally {
@@ -531,14 +531,14 @@ class LoaderManagerImpl extends LoaderManager {
 
         LoaderInfo info = mLoaders.get(id);
 
-        if (DEBUG) Log.v(TAG, "initLoader in " + this + ": args=" + args);
+        if (debug) Log.v(TAG, "initLoader in " + this + ": args=" + args);
 
         if (info == null) {
             // Loader doesn't already exist; create.
             info = createAndInstallLoader(id, args,  (LoaderManager.LoaderCallbacks<Object>)callback);
-            if (DEBUG) Log.v(TAG, "  Created new loader " + info);
+            if (debug) Log.v(TAG, "  Created new loader " + info);
         } else {
-            if (DEBUG) Log.v(TAG, "  Re-using existing loader " + info);
+            if (debug) Log.v(TAG, "  Re-using existing loader " + info);
             info.mCallbacks = (LoaderManager.LoaderCallbacks<Object>)callback;
         }
 
@@ -580,7 +580,7 @@ class LoaderManagerImpl extends LoaderManager {
         }
 
         LoaderInfo info = mLoaders.get(id);
-        if (DEBUG) Log.v(TAG, "restartLoader in " + this + ": args=" + args);
+        if (debug) Log.v(TAG, "restartLoader in " + this + ": args=" + args);
         if (info != null) {
             LoaderInfo inactive = mInactiveLoaders.get(id);
             if (inactive != null) {
@@ -589,7 +589,7 @@ class LoaderManagerImpl extends LoaderManager {
                     // called from within onLoadComplete, where we haven't
                     // yet destroyed the last inactive loader.  So just do
                     // that now.
-                    if (DEBUG) Log.v(TAG, "  Removing last inactive loader: " + info);
+                    if (debug) Log.v(TAG, "  Removing last inactive loader: " + info);
                     inactive.mDeliveredData = false;
                     inactive.destroy();
                     info.mLoader.abandon();
@@ -601,7 +601,7 @@ class LoaderManagerImpl extends LoaderManager {
                         // The current Loader has not been started...  we thus
                         // have no reason to keep it around, so bam, slam,
                         // thank-you-ma'am.
-                        if (DEBUG) Log.v(TAG, "  Current loader is stopped; replacing");
+                        if (debug) Log.v(TAG, "  Current loader is stopped; replacing");
                         mLoaders.put(id, null);
                         info.destroy();
                     } else {
@@ -609,11 +609,11 @@ class LoaderManagerImpl extends LoaderManager {
                         // up this request to be processed once one of the other loaders
                         // finishes.
                         if (info.mPendingLoader != null) {
-                            if (DEBUG) Log.v(TAG, "  Removing pending loader: " + info.mPendingLoader);
+                            if (debug) Log.v(TAG, "  Removing pending loader: " + info.mPendingLoader);
                             info.mPendingLoader.destroy();
                             info.mPendingLoader = null;
                         }
-                        if (DEBUG) Log.v(TAG, "  Enqueuing as new pending loader");
+                        if (debug) Log.v(TAG, "  Enqueuing as new pending loader");
                         info.mPendingLoader = createLoader(id, args,
                                 (LoaderManager.LoaderCallbacks<Object>)callback);
                         return (Loader<D>)info.mPendingLoader.mLoader;
@@ -622,7 +622,7 @@ class LoaderManagerImpl extends LoaderManager {
             } else {
                 // Keep track of the previous instance of this loader so we can destroy
                 // it when the new one completes.
-                if (DEBUG) Log.v(TAG, "  Making last loader inactive: " + info);
+                if (debug) Log.v(TAG, "  Making last loader inactive: " + info);
                 info.mLoader.abandon();
                 mInactiveLoaders.put(id, info);
             }
@@ -644,7 +644,7 @@ class LoaderManagerImpl extends LoaderManager {
             throw new IllegalStateException("Called while creating a loader");
         }
 
-        if (DEBUG) Log.v(TAG, "destroyLoader in " + this + " of " + id);
+        if (debug) Log.v(TAG, "destroyLoader in " + this + " of " + id);
         int idx = mLoaders.indexOfKey(id);
         if (idx >= 0) {
             LoaderInfo info = mLoaders.valueAt(idx);
@@ -680,7 +680,7 @@ class LoaderManagerImpl extends LoaderManager {
     }
 
     void doStart() {
-        if (DEBUG) Log.v(TAG, "Starting in " + this);
+        if (debug) Log.v(TAG, "Starting in " + this);
         if (mStarted) {
             RuntimeException e = new RuntimeException("here");
             e.fillInStackTrace();
@@ -698,7 +698,7 @@ class LoaderManagerImpl extends LoaderManager {
     }
 
     void doStop() {
-        if (DEBUG) Log.v(TAG, "Stopping in " + this);
+        if (debug) Log.v(TAG, "Stopping in " + this);
         if (!mStarted) {
             RuntimeException e = new RuntimeException("here");
             e.fillInStackTrace();
@@ -713,7 +713,7 @@ class LoaderManagerImpl extends LoaderManager {
     }
 
     void doRetain() {
-        if (DEBUG) Log.v(TAG, "Retaining in " + this);
+        if (debug) Log.v(TAG, "Retaining in " + this);
         if (!mStarted) {
             RuntimeException e = new RuntimeException("here");
             e.fillInStackTrace();
@@ -730,7 +730,7 @@ class LoaderManagerImpl extends LoaderManager {
 
     void finishRetain() {
         if (mRetaining) {
-            if (DEBUG) Log.v(TAG, "Finished Retaining in " + this);
+            if (debug) Log.v(TAG, "Finished Retaining in " + this);
 
             mRetaining = false;
             for (int i = mLoaders.size()-1; i >= 0; i--) {
@@ -753,13 +753,13 @@ class LoaderManagerImpl extends LoaderManager {
 
     void doDestroy() {
         if (!mRetaining) {
-            if (DEBUG) Log.v(TAG, "Destroying Active in " + this);
+            if (debug) Log.v(TAG, "Destroying Active in " + this);
             for (int i = mLoaders.size()-1; i >= 0; i--) {
                 mLoaders.valueAt(i).destroy();
             }
         }
 
-        if (DEBUG) Log.v(TAG, "Destroying Inactive in " + this);
+        if (debug) Log.v(TAG, "Destroying Inactive in " + this);
         for (int i = mInactiveLoaders.size()-1; i >= 0; i--) {
             mInactiveLoaders.valueAt(i).destroy();
         }

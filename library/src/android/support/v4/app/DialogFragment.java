@@ -114,7 +114,7 @@ public class DialogFragment extends Fragment
      * the activity.
      * @param manager The FragmentManager this fragment will be added to.
      * @param tag The tag for this fragment, as per
-     * {@link FragmentTransaction#add(Fragment, String) FragmentTransaction.add}.
+     * {@link FragmentTransaction#add(FRAGMENT, String) FragmentTransaction.add}.
      */
     public void show(FragmentManager manager, String tag) {
         FragmentTransaction ft = manager.beginTransaction();
@@ -127,7 +127,7 @@ public class DialogFragment extends Fragment
      * and then committing the transaction.
      * @param transaction An existing transaction in which to add the fragment.
      * @param tag The tag for this fragment, as per
-     * {@link FragmentTransaction#add(Fragment, String) FragmentTransaction.add}.
+     * {@link FragmentTransaction#add(FRAGMENT, String) FragmentTransaction.add}.
      * @return Returns the identifier of the committed transaction, as per
      * {@link FragmentTransaction#commit() FragmentTransaction.commit()}.
      */
@@ -207,7 +207,7 @@ public class DialogFragment extends Fragment
      *
      * <p>This is normally set for you based on whether the fragment is
      * associated with a container view ID passed to
-     * {@link FragmentTransaction#add(int, Fragment) FragmentTransaction.add(int, Fragment)}.
+     * {@link FragmentTransaction#add(int, FRAGMENT) FragmentTransaction.add(int, FRAGMENT)}.
      * If the fragment was added with a container, setShowsDialog will be
      * initialized to false; otherwise, it will be true.
      *
@@ -282,10 +282,10 @@ public class DialogFragment extends Fragment
      * To find out about these events, override {@link #onCancel(DialogInterface)}
      * and {@link #onDismiss(DialogInterface)}.</p>
      *
-     * @param savedInstanceState The last saved instance state of the Fragment,
-     * or null if this is a freshly created Fragment.
+     * @param savedInstanceState The last saved instance state of the FRAGMENT,
+     * or null if this is a freshly created FRAGMENT.
      *
-     * @return Return a new Dialog instance to be displayed by the Fragment.
+     * @return Return a new Dialog instance to be displayed by the FRAGMENT.
      */
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new Dialog(getActivity(), getTheme());
