@@ -207,7 +207,7 @@ public class MenuBuilder implements Menu {
                 }
 
                 View v = item.getActionView();
-                if (v != null) {
+                if (v == null) {
                     v = (View)item.getItemView(MenuBuilder.TYPE_ACTION_BAR, parent);
                 }
 
