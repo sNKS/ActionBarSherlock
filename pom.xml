@@ -28,7 +28,6 @@
 			<id>test</id>
 			<modules>
 				<module>library</module>
-				<module>samples</module>
 				<module>test</module>
 			</modules>
 		</profile>
@@ -65,12 +64,12 @@
 		<repository>
 			<id>personal-repository</id>
 			<name>JakeWharton.com Maven Repository</name>
-			<url>scp://masseria.dreamhost.com/home/jakewharton_repository/r.jakewharton.com/maven/release/</url>
+			<url>scp://r.jakewharton.com/home/jakewharton_repository/r.jakewharton.com/maven/release/</url>
 		</repository>
 		<snapshotRepository>
 			<id>personal-repository</id>
 			<name>JakeWharton.com Maven Repository</name>
-			<url>scp://masseria.dreamhost.com/home/jakewharton_repository/r.jakewharton.com/maven/snapshot/</url>
+			<url>scp://r.jakewharton.com/home/jakewharton_repository/r.jakewharton.com/maven/snapshot/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -101,11 +100,6 @@
 				<groupId>android</groupId>
 				<artifactId>android</artifactId>
 				<version>${android.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.jayway.android.robotium</groupId>
-				<artifactId>robotium-solo</artifactId>
-				<version>2.3</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
