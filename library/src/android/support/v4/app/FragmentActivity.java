@@ -197,7 +197,7 @@ public class FragmentActivity extends Activity {
         if (!mIsActionBarImplAttached) {
             //Do not allow an action bar if we have a parent activity
             if (getParent() != null) {
-                mWindowFlags |= ~WINDOW_FLAG_ACTION_BAR;
+                mWindowFlags &= ~WINDOW_FLAG_ACTION_BAR;
             }
             if ((mWindowFlags & WINDOW_FLAG_ACTION_BAR) == WINDOW_FLAG_ACTION_BAR) {
                 if ((mWindowFlags & WINDOW_FLAG_ACTION_BAR_OVERLAY) == WINDOW_FLAG_ACTION_BAR_OVERLAY) {
@@ -730,6 +730,10 @@ public class FragmentActivity extends Activity {
                 if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Calling support method with custom menu.");
                 prepareResult = onPrepareOptionsMenu(mSupportMenu);
                 if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Support method result returned " + prepareResult);
+                if (prepareResult) {
+                    if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Dispatching fragment method with custom menu.");
+                    mFragments.dispatchPrepareOptionsMenu(mSupportMenu);
+                }
             }
 
             if (mOptionsMenuInvalidated) {
@@ -755,8 +759,13 @@ public class FragmentActivity extends Activity {
                 result = true;
             }
         } else {
-            if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Calling support method with custom menu.");
-            result = onPrepareOptionsMenu(new MenuWrapper(menu));
+            if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Calling support method with wrapped native menu.");
+            final MenuWrapper wrappedMenu = new MenuWrapper(menu);
+            result = onPrepareOptionsMenu(wrappedMenu);
+            if (result) {
+                if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Dispatching fragment method with wrapped native menu.");
+                mFragments.dispatchPrepareOptionsMenu(wrappedMenu);
+            }
         }
 
         if (DEBUG) Log.d(TAG, "onPrepareOptionsMenu(android.view.Menu): Returning " + result);
@@ -780,12 +789,12 @@ public class FragmentActivity extends Activity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
             startActivity(intent);
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
                 OverridePendingTransition.invoke(this);
             }
 
             finish();
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
                 OverridePendingTransition.invoke(this);
             }
         /*
@@ -861,6 +870,7 @@ public class FragmentActivity extends Activity {
 
         if (!mCreated) {
             mCreated = true;
+            ensureSupportActionBarAttached(); //Needed for retained fragments
             mFragments.dispatchActivityCreated();
         }
 
