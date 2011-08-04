@@ -116,7 +116,7 @@ public class FragmentActivity extends Activity {
     boolean mIsActionBarImplAttached;
     long mWindowFlags = 0;
 
-    final MenuBuilder mSupportMenu;
+    MenuBuilder mSupportMenu;
     final MenuBuilder.Callback mSupportMenuCallback = new MenuBuilder.Callback() {
         @Override
         public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
@@ -178,15 +178,10 @@ public class FragmentActivity extends Activity {
 
 
     public FragmentActivity() {
-        super();
-
         if (IS_HONEYCOMB) {
             mActionBar = ActionBarNativeImpl.createFor(this);
-            mSupportMenu = null; //Everything should be done natively
         } else {
             mActionBar = new ActionBarSupportImpl(this);
-            mSupportMenu = new MenuBuilder(this);
-            mSupportMenu.setCallback(mSupportMenuCallback);
         }
     }
 
@@ -544,7 +539,8 @@ public class FragmentActivity extends Activity {
         if (IS_HONEYCOMB) {
             HoneycombInvalidateOptionsMenu.invoke(this);
         } else {
-            mSupportMenu.clear();
+            mSupportMenu = new MenuBuilder(this);
+            mSupportMenu.setCallback(mSupportMenuCallback);
 
             mOptionsMenuCreateResult  = onCreateOptionsMenu(mSupportMenu);
             mOptionsMenuCreateResult |= mFragments.dispatchCreateOptionsMenu(mSupportMenu, getMenuInflater());
