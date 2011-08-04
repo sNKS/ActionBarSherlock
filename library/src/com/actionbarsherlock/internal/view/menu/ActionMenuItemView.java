@@ -110,7 +110,7 @@ public class ActionMenuItemView extends LinearLayout implements MenuView.ItemVie
     public void setTitle(CharSequence title) {
         mTitle = title;
         setContentDescription(title);
-        if ((mImageButton.getDrawable() != null) || mItemData.showsTextAsAction()) {
+        if ((title != null) && (mImageButton.getDrawable() != null) || mItemData.showsTextAsAction()) {
             mTextButton.setText(mTitle);
             mTextButton.setVisibility(View.VISIBLE);
         }
